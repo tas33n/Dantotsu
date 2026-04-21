@@ -40,7 +40,6 @@
             android:layout_marginHorizontal="24dp"
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
-            android:visibility="gone"
             app:singleSelection="true"
             app:selectionRequired="true"
             app:checkedButton="@+id/btnTabAnime">
@@ -53,6 +52,15 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/poppins_semi_bold"
                 android:text="ANIME" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTabManga"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_semi_bold"
+                android:text="MANGA" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <!-- Preview Area -->
