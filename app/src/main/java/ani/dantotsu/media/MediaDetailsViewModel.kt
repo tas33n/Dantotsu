@@ -160,6 +160,7 @@ class MediaDetailsViewModel : ViewModel() {
     suspend fun loadEpisodeVideos(ep: Episode, i: Int, post: Boolean = true) {
         val link = ep.link ?: return
         if (!ep.allStreams || ep.extractors.isNullOrEmpty()) {
+            val existingExtractors = ep.extractors?.toMutableList() ?: mutableListOf()
             val list = mutableListOf<VideoExtractor>()
             ep.extractors = list
             watchSources?.get(i)?.apply {
@@ -175,6 +176,8 @@ class MediaDetailsViewModel : ViewModel() {
                 ep.extractorCallback = null
                 if (list.isNotEmpty())
                     ep.allStreams = true
+                else if (existingExtractors.isNotEmpty())
+                    ep.extractors = existingExtractors
             }
         }
 
@@ -327,5 +330,34 @@ class MediaDetailsViewModel : ViewModel() {
 
     fun clearLocalSubtitles(id: String) {
         localSubtitlesMap.remove(id)
+    }
+
+    val adaptation = MutableLiveData<MangaAnimeUtil.AnimeAdaptation?>()
+    val nextRelease = MutableLiveData<MangaAnimeUtil.NextRelease?>()
+    fun loadMangaExtras(media: Media) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val seriesDeferred = async {
+                    MangaAnimeUtil.getSeriesFromMedia(media)
+                }
+
+                val adaptationDeferred = async {
+                    MangaAnimeUtil.getAnimeAdaptation(seriesDeferred.await())
+                }
+
+                val nextReleaseDeferred = async {
+                    MangaAnimeUtil.getNextChapterPrediction(
+                        media,
+                        seriesDeferred.await()
+                    )
+                }
+
+                adaptation.postValue(adaptationDeferred.await())
+                nextRelease.postValue(nextReleaseDeferred.await())
+
+            } catch (e: Exception) {
+                Logger.log("MangaExtras error: $e")
+            }
+        }
     }
 }
