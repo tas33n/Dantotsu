@@ -39,10 +39,8 @@ import ani.dantotsu.connections.anilist.AnilistHomeViewModel
 import ani.dantotsu.databinding.ActivityMainBinding
 import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.databinding.SplashScreenBinding
-import ani.dantotsu.home.AnimeFragment
 import ani.dantotsu.home.HomeFragment
 import ani.dantotsu.home.LoginFragment
-import ani.dantotsu.home.MangaFragment
 import ani.dantotsu.home.NoInternet
 import ani.dantotsu.media.MediaDetailsActivity
 import ani.dantotsu.notifications.TaskScheduler
@@ -234,9 +232,7 @@ class MainActivity : AppCompatActivity() {
         binding.root.doOnAttach {
             initActivity(this)
             val preferences: SourcePreferences = Injekt.get()
-            if (preferences.animeExtensionUpdatesCount()
-                    .get() > 0 || preferences.mangaExtensionUpdatesCount().get() > 0
-            ) {
+            if (preferences.animeExtensionUpdatesCount().get() > 0) {
                 snackString(R.string.extension_updates_available)
                     ?.setDuration(Snackbar.LENGTH_SHORT)
                     ?.setAction(R.string.review) {
@@ -246,9 +242,9 @@ class MainActivity : AppCompatActivity() {
             window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
             selectedOption = if (fragment != null) {
                 when (fragment) {
-                    AnimeFragment::class.java.name -> 0
+                    "ani.dantotsu.profile.activity.ActivityFragment" -> 0
                     HomeFragment::class.java.name -> 1
-                    MangaFragment::class.java.name -> 2
+                    "ani.dantotsu.settings.ExtensionsFragment" -> 2
                     else -> 1
                 }
             } else {
@@ -450,14 +446,9 @@ class MainActivity : AppCompatActivity() {
             if (uri == null) {
                 throw Exception("Uri is null")
             }
-            if ((uri.scheme == "tachiyomi" || uri.scheme == "aniyomi" || uri.scheme == "novelyomi") && uri.host == "add-repo") {
+            if (uri.scheme == "aniyomi" && uri.host == "add-repo") {
                 val url = uri.getQueryParameter("url") ?: throw Exception("No url for repo import")
-                val (prefName, name) = when (uri.scheme) {
-                    "tachiyomi" -> PrefName.MangaExtensionRepos to "Manga"
-                    "aniyomi" -> PrefName.AnimeExtensionRepos to "Anime"
-                    "novelyomi" -> PrefName.NovelExtensionRepos to "Novel"
-                    else -> throw Exception("Invalid scheme")
-                }
+                val (prefName, name) = PrefName.AnimeExtensionRepos to "Anime"
                 val savedRepos: Set<String> = PrefManager.getVal(prefName)
                 val newRepos = savedRepos.toMutableSet()
                 AddRepositoryBottomSheet.addRepoWarning(this) {
@@ -551,9 +542,9 @@ class MainActivity : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             when (position) {
-                0 -> return AnimeFragment()
+                0 -> return ani.dantotsu.profile.activity.ActivityFragment.newInstance(ani.dantotsu.profile.activity.ActivityFragment.Companion.ActivityType.USER)
                 1 -> return if (Anilist.token != null) HomeFragment() else LoginFragment()
-                2 -> return MangaFragment()
+                2 -> return ani.dantotsu.settings.ExtensionsFragment()
             }
             return LoginFragment()
         }

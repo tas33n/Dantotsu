@@ -84,7 +84,6 @@ class HomeFragment : Fragment() {
             if (activity != null && _binding != null) lifecycleScope.launch(Dispatchers.Main) {
                 binding.homeUserName.text = Anilist.username
                 binding.homeUserEpisodesWatched.text = Anilist.episodesWatched.toString()
-                binding.homeUserChaptersRead.text = Anilist.chapterRead.toString()
                 binding.homeUserAvatar.loadImage(Anilist.avatar)
                 val bannerAnimations: Boolean = PrefManager.getVal(PrefName.BannerAnimations)
                 blurImage(
@@ -96,18 +95,47 @@ class HomeFragment : Fragment() {
                         && PrefManager.getVal<Boolean>(PrefName.ShowNotificationRedDot) == true
                 binding.homeNotificationCount.text = Anilist.unreadNotificationCount.toString()
 
-                binding.homeAnimeList.setOnClickListener {
+                binding.homeWatchingStatus.setSafeOnClickListener {
                     ContextCompat.startActivity(
                         requireActivity(), Intent(requireActivity(), ListActivity::class.java)
                             .putExtra("anime", true)
+                            .putExtra("status", 1)
                             .putExtra("userId", Anilist.userid)
                             .putExtra("username", Anilist.username), null
                     )
                 }
-                binding.homeMangaList.setOnClickListener {
+                binding.homePlanningStatus.setSafeOnClickListener {
                     ContextCompat.startActivity(
                         requireActivity(), Intent(requireActivity(), ListActivity::class.java)
-                            .putExtra("anime", false)
+                            .putExtra("anime", true)
+                            .putExtra("status", 0)
+                            .putExtra("userId", Anilist.userid)
+                            .putExtra("username", Anilist.username), null
+                    )
+                }
+                binding.homeCompletedStatus.setSafeOnClickListener {
+                    ContextCompat.startActivity(
+                        requireActivity(), Intent(requireActivity(), ListActivity::class.java)
+                            .putExtra("anime", true)
+                            .putExtra("status", 2)
+                            .putExtra("userId", Anilist.userid)
+                            .putExtra("username", Anilist.username), null
+                    )
+                }
+                binding.homeDroppedStatus.setSafeOnClickListener {
+                    ContextCompat.startActivity(
+                        requireActivity(), Intent(requireActivity(), ListActivity::class.java)
+                            .putExtra("anime", true)
+                            .putExtra("status", 5)
+                            .putExtra("userId", Anilist.userid)
+                            .putExtra("username", Anilist.username), null
+                    )
+                }
+                binding.homePausedStatus.setSafeOnClickListener {
+                    ContextCompat.startActivity(
+                        requireActivity(), Intent(requireActivity(), ListActivity::class.java)
+                            .putExtra("anime", true)
+                            .putExtra("status", 4)
                             .putExtra("userId", Anilist.userid)
                             .putExtra("username", Anilist.username), null
                     )
@@ -117,8 +145,7 @@ class HomeFragment : Fragment() {
                 binding.homeUserDataContainer.visibility = View.VISIBLE
                 binding.homeUserDataContainer.layoutAnimation =
                     LayoutAnimationController(setSlideUp(), 0.25f)
-                binding.homeAnimeList.visibility = View.VISIBLE
-                binding.homeMangaList.visibility = View.VISIBLE
+                binding.homeListContainer.visibility = View.VISIBLE
                 binding.homeListContainer.layoutAnimation =
                     LayoutAnimationController(setSlideIn(), 0.25f)
             }
@@ -206,8 +233,12 @@ class HomeFragment : Fragment() {
         //List Images
         model.getListImages().observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
-                binding.homeAnimeListImage.loadImage(it[0] ?: "https://bit.ly/31bsIHq")
-                binding.homeMangaListImage.loadImage(it[1] ?: "https://bit.ly/2ZGfcuG")
+                val image = it[0] ?: "https://bit.ly/31bsIHq"
+                binding.homeWatchingImage.loadImage(image)
+                binding.homePlanningImage.loadImage(image)
+                binding.homeCompletedImage.loadImage(image)
+                binding.homeDroppedImage.loadImage(image)
+                binding.homePausedImage.loadImage(image)
             }
         }
 
@@ -317,45 +348,6 @@ class HomeFragment : Fragment() {
         )
 
         initRecyclerView(
-            model.getMangaContinue(),
-            binding.homeContinueReadingContainer,
-            binding.homeReadingRecyclerView,
-            binding.homeReadingProgressBar,
-            binding.homeReadingEmpty,
-            binding.homeContinueRead,
-            binding.homeContinueReadMore,
-            getString(R.string.continue_reading)
-        )
-        binding.homeReadingBrowseButton.setOnClickListener {
-            bottomBar.selectTabAt(2)
-        }
-
-        initRecyclerView(
-            model.getMangaFav(),
-            binding.homeFavMangaContainer,
-            binding.homeFavMangaRecyclerView,
-            binding.homeFavMangaProgressBar,
-            binding.homeFavMangaEmpty,
-            binding.homeFavManga,
-            binding.homeFavMangaMore,
-            getString(R.string.fav_manga)
-        )
-
-        initRecyclerView(
-            model.getMangaPlanned(),
-            binding.homePlannedMangaContainer,
-            binding.homePlannedMangaRecyclerView,
-            binding.homePlannedMangaProgressBar,
-            binding.homePlannedMangaEmpty,
-            binding.homePlannedManga,
-            binding.homePlannedMangaMore,
-            getString(R.string.planned_manga)
-        )
-        binding.homePlannedMangaBrowseButton.setOnClickListener {
-            bottomBar.selectTabAt(2)
-        }
-
-        initRecyclerView(
             model.getRecommendation(),
             binding.homeRecommendedContainer,
             binding.homeRecommendedRecyclerView,
@@ -455,9 +447,6 @@ class HomeFragment : Fragment() {
             "AnimeContinue",
             "AnimeFav",
             "AnimePlanned",
-            "MangaContinue",
-            "MangaFav",
-            "MangaPlanned",
             "Recommendation",
             "UserStatus",
             "MissingSequels",
@@ -467,9 +456,6 @@ class HomeFragment : Fragment() {
             binding.homeContinueWatchingContainer,
             binding.homeFavAnimeContainer,
             binding.homePlannedAnimeContainer,
-            binding.homeContinueReadingContainer,
-            binding.homeFavMangaContainer,
-            binding.homePlannedMangaContainer,
             binding.homeRecommendedContainer,
             binding.homeUserStatusContainer,
             binding.homeMissingSequelsContainer,
@@ -505,15 +491,18 @@ class HomeFragment : Fragment() {
                     val homeLayoutShow: List<Boolean> = PrefManager.getVal(PrefName.HomeLayout)
                     var homeLayoutOrder: List<Int> = PrefManager.getVal(PrefName.HomeLayoutOrder)
                     if (homeLayoutOrder.isEmpty()) {
-                        homeLayoutOrder = (0..7).toList()
+                        homeLayoutOrder = (0..5).toList()
                     }
 
                     withContext(Dispatchers.Main) {
                         homeLayoutShow.indices.forEach { i ->
-                            if (homeLayoutShow.elementAt(i)) {
-                                empty = false
-                            } else {
-                                containers[i].visibility = View.GONE
+                            val container = containers.getOrNull(i)
+                            if (container != null) {
+                                if (homeLayoutShow.elementAt(i)) {
+                                    empty = false
+                                } else {
+                                    container.visibility = View.GONE
+                                }
                             }
                         }
 

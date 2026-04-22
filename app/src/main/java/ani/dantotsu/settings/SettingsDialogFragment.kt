@@ -14,12 +14,10 @@ import ani.dantotsu.R
 import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.databinding.BottomSheetSettingsBinding
 import ani.dantotsu.download.anime.OfflineAnimeFragment
-import ani.dantotsu.download.manga.OfflineMangaFragment
 import ani.dantotsu.getThemeColor
 import ani.dantotsu.home.AnimeFragment
 import ani.dantotsu.home.HomeFragment
 import ani.dantotsu.home.LoginFragment
-import ani.dantotsu.home.MangaFragment
 import ani.dantotsu.home.NoInternet
 import ani.dantotsu.incognitoNotification
 import ani.dantotsu.loadImage
@@ -107,18 +105,8 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
             incognitoNotification(requireContext())
         }
 
-        binding.settingsExtensionSettings.setSafeOnClickListener {
-            startActivity(Intent(activity, ExtensionsActivity::class.java))
-            dismiss()
-        }
-
         binding.settingsSettings.setSafeOnClickListener {
             startActivity(Intent(activity, SettingsActivity::class.java))
-            dismiss()
-        }
-
-        binding.settingsActivity.setSafeOnClickListener {
-            startActivity(Intent(activity, FeedActivity::class.java))
             dismiss()
         }
 
@@ -130,15 +118,6 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
         binding.settingsDownloads.setOnCheckedChangeListener { _, isChecked ->
             Timer().schedule(300) {
                 when (pageType) {
-                    PageType.MANGA -> {
-                        val intent = Intent(activity, NoInternet::class.java)
-                        intent.putExtra(
-                            "FRAGMENT_CLASS_NAME",
-                            OfflineMangaFragment::class.java.name
-                        )
-                        startActivity(intent)
-                    }
-
                     PageType.ANIME -> {
                         val intent = Intent(activity, NoInternet::class.java)
                         intent.putExtra(
@@ -151,12 +130,6 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
                     PageType.HOME -> {
                         val intent = Intent(activity, NoInternet::class.java)
                         intent.putExtra("FRAGMENT_CLASS_NAME", OfflineFragment::class.java.name)
-                        startActivity(intent)
-                    }
-
-                    PageType.OfflineMANGA -> {
-                        val intent = Intent(activity, MainActivity::class.java)
-                        intent.putExtra("FRAGMENT_CLASS_NAME", MangaFragment::class.java.name)
                         startActivity(intent)
                     }
 
@@ -189,7 +162,7 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         enum class PageType {
-            MANGA, ANIME, HOME, OfflineMANGA, OfflineANIME, OfflineHOME
+            ANIME, HOME, OfflineANIME, OfflineHOME
         }
 
         fun newInstance(pageType: PageType): SettingsDialogFragment {

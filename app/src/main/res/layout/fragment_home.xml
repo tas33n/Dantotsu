@@ -108,30 +108,6 @@
                                         android:textSize="12sp" />
                                 </LinearLayout>
 
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:alpha="0.58"
-                                        android:fontFamily="@font/poppins"
-                                        android:text="@string/chapters_read"
-                                        android:textSize="12sp"
-                                        tools:ignore="TextContrastCheck" />
-
-                                    <TextView
-                                        android:id="@+id/homeUserChaptersRead"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="4dp"
-                                        android:fontFamily="@font/poppins_bold"
-                                        android:textColor="?attr/colorPrimaryVariant"
-                                        android:textSize="12sp" />
-                                </LinearLayout>
-
                             </LinearLayout>
 
                             <ProgressBar
@@ -216,125 +192,163 @@
 
                     </LinearLayout>
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <HorizontalScrollView
                         android:id="@+id/homeListContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:paddingStart="24dp"
-                        android:paddingEnd="24dp">
+                        android:paddingEnd="24dp"
+                        android:scrollbars="none">
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/homeAnimeList"
-                            android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:layout_margin="8dp"
-                            android:visibility="invisible"
-                            app:boxStrokeColor="@color/text_input_layout_stroke_color"
-                            app:cardCornerRadius="16dp"
-                            app:layout_constrainedWidth="true"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/homeMangaList"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_max="256dp"
-                            tools:visibility="visible">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingVertical="8dp">
 
-                            <ImageView
-                                android:id="@+id/homeAnimeListImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                tools:ignore="ContentDescription"
-                                tools:src="@tools:sample/backgrounds/scenic" />
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/homeWatchingStatus"
+                                android:layout_width="120dp"
+                                android:layout_height="64dp"
+                                android:layout_margin="4dp"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <ImageView
+                                        android:id="@+id/homeWatchingImage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:alpha="0.4"
+                                        tools:src="@tools:sample/backgrounds/scenic"/>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="Watching"
+                                        android:textSize="12sp"
+                                        android:textAllCaps="true"/>
+                                </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:alpha="0.6"
-                                android:background="@color/bg_black" />
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/homePlanningStatus"
+                                android:layout_width="120dp"
+                                android:layout_height="64dp"
+                                android:layout_margin="4dp"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <ImageView
+                                        android:id="@+id/homePlanningImage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:alpha="0.4"
+                                        tools:src="@tools:sample/backgrounds/scenic"/>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="Planning"
+                                        android:textSize="12sp"
+                                        android:textAllCaps="true"/>
+                                </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:orientation="vertical">
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/homeCompletedStatus"
+                                android:layout_width="120dp"
+                                android:layout_height="64dp"
+                                android:layout_margin="4dp"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <ImageView
+                                        android:id="@+id/homeCompletedImage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:alpha="0.4"
+                                        tools:src="@tools:sample/backgrounds/scenic"/>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="Completed"
+                                        android:textSize="12sp"
+                                        android:textAllCaps="true"/>
+                                </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:text="@string/anime_list"
-                                    android:textAllCaps="true"
-                                    android:textColor="@color/bg_white"
-                                    android:textSize="16sp" />
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/homeDroppedStatus"
+                                android:layout_width="120dp"
+                                android:layout_height="64dp"
+                                android:layout_margin="4dp"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <ImageView
+                                        android:id="@+id/homeDroppedImage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:alpha="0.4"
+                                        tools:src="@tools:sample/backgrounds/scenic"/>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="Dropped"
+                                        android:textSize="12sp"
+                                        android:textAllCaps="true"/>
+                                </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
-                                <View
-                                    android:layout_width="64dp"
-                                    android:layout_height="2dp"
-                                    android:layout_gravity="center"
-                                    android:background="?attr/colorPrimary" />
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/homePausedStatus"
+                                android:layout_width="120dp"
+                                android:layout_height="64dp"
+                                android:layout_margin="4dp"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <ImageView
+                                        android:id="@+id/homePausedImage"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:alpha="0.4"
+                                        tools:src="@tools:sample/backgrounds/scenic"/>
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:text="Paused"
+                                        android:textSize="12sp"
+                                        android:textAllCaps="true"/>
+                                </FrameLayout>
+                            </com.google.android.material.card.MaterialCardView>
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/homeMangaList"
-                            android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:layout_margin="8dp"
-                            android:layout_marginBottom="16dp"
-                            android:visibility="invisible"
-                            app:boxStrokeColor="@color/text_input_layout_stroke_color"
-                            app:cardCornerRadius="16dp"
-                            app:layout_constrainedWidth="true"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/homeAnimeList"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_max="256dp"
-                            tools:visibility="visible">
-
-                            <ImageView
-                                android:id="@+id/homeMangaListImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                tools:ignore="ContentDescription"
-                                tools:src="@tools:sample/backgrounds/scenic" />
-
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:alpha="0.6"
-                                android:background="@color/bg_black" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:text="@string/manga_list"
-                                    android:textAllCaps="true"
-                                    android:textColor="@color/bg_white"
-                                    android:textSize="16sp" />
-
-                                <View
-                                    android:layout_width="64dp"
-                                    android:layout_height="2dp"
-                                    android:layout_gravity="center"
-                                    android:background="?attr/colorPrimary" />
-                            </LinearLayout>
-
-                        </com.google.android.material.card.MaterialCardView>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                        </LinearLayout>
+                    </HorizontalScrollView>
 
                 </LinearLayout>
 
@@ -689,291 +703,6 @@
 
                     <ani.dantotsu.FadingEdgeRecyclerView
                         android:id="@+id/homePlannedAnimeRecyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
-                        android:requiresFadingEdge="horizontal"
-                        tools:itemCount="4"
-                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_media_compact"
-                        tools:orientation="horizontal" />
-                </FrameLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/homeContinueReadingContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <TextView
-                        android:id="@+id/homeContinueRead"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/poppins_bold"
-                        android:padding="8dp"
-                        android:text="@string/continue_reading"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:id="@+id/homeContinueReadMore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:padding="8dp"
-                        android:src="@drawable/arrow_mark"
-                        android:textSize="16sp"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="250dp">
-
-                    <LinearLayout
-                        android:id="@+id/homeReadingEmpty"
-                        android:layout_width="match_parent"
-                        android:layout_height="250dp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="32dp"
-                            android:alpha="0.58"
-                            android:src="@drawable/ic_round_import_contacts_24"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.58"
-                            android:text="@string/empty" />
-
-                        <Button
-                            android:id="@+id/homeReadingBrowseButton"
-                            android:layout_width="128dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:text="@string/browse_manga"
-                            app:cornerRadius="16dp"
-                            tools:ignore="TextContrastCheck" />
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/homeReadingProgressBar"
-                        style="?android:attr/progressBarStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_margin="90dp" />
-
-                    <ani.dantotsu.FadingEdgeRecyclerView
-                        android:id="@+id/homeReadingRecyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
-                        android:requiresFadingEdge="horizontal"
-                        tools:itemCount="4"
-                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_media_compact"
-                        tools:orientation="horizontal" />
-                </FrameLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/homeFavMangaContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <TextView
-                        android:id="@+id/homeFavManga"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/poppins_bold"
-                        android:padding="8dp"
-                        android:text="@string/fav_manga"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:id="@+id/homeFavMangaMore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:padding="8dp"
-                        android:src="@drawable/arrow_mark"
-                        android:textSize="16sp"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="250dp">
-
-                    <LinearLayout
-                        android:id="@+id/homeFavMangaEmpty"
-                        android:layout_width="match_parent"
-                        android:layout_height="250dp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:visibility="gone"
-                        tools:ignore="UseCompoundDrawables">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_round_heart_broken_24"
-                            app:tint="?attr/colorPrimary"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.58"
-                            android:paddingStart="32dp"
-                            android:paddingEnd="32dp"
-                            android:text="@string/empty_fav"
-                            android:textAlignment="center"
-                            tools:ignore="TextContrastCheck" />
-
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/homeFavMangaProgressBar"
-                        style="?android:attr/progressBarStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_margin="90dp" />
-
-                    <ani.dantotsu.FadingEdgeRecyclerView
-                        android:id="@+id/homeFavMangaRecyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp"
-                        android:requiresFadingEdge="horizontal"
-                        tools:itemCount="4"
-                        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_media_compact"
-                        tools:orientation="horizontal" />
-                </FrameLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/homePlannedMangaContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <TextView
-                        android:id="@+id/homePlannedManga"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/poppins_bold"
-                        android:padding="8dp"
-                        android:text="@string/planned_manga"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:id="@+id/homePlannedMangaMore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/poppins_bold"
-                        android:padding="8dp"
-                        android:src="@drawable/arrow_mark"
-
-                        android:textSize="16sp"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="250dp">
-
-                    <LinearLayout
-                        android:id="@+id/homePlannedMangaEmpty"
-                        android:layout_width="match_parent"
-                        android:layout_height="250dp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="32dp"
-                            android:alpha="0.58"
-                            android:src="@drawable/ic_round_import_contacts_24"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:alpha="0.58"
-                            android:text="@string/empty" />
-
-                        <Button
-                            android:id="@+id/homePlannedMangaBrowseButton"
-                            android:layout_width="128dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:text="@string/browse_manga"
-                            app:cornerRadius="16dp"
-                            tools:ignore="TextContrastCheck" />
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/homePlannedMangaProgressBar"
-                        style="?android:attr/progressBarStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_margin="90dp" />
-
-                    <ani.dantotsu.FadingEdgeRecyclerView
-                        android:id="@+id/homePlannedMangaRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"

@@ -15,9 +15,6 @@ import ani.dantotsu.connections.crashlytics.CrashlyticsInterface
 import ani.dantotsu.notifications.TaskScheduler
 import ani.dantotsu.others.DisabledReports
 import ani.dantotsu.parsers.AnimeSources
-import ani.dantotsu.parsers.MangaSources
-import ani.dantotsu.parsers.NovelSources
-import ani.dantotsu.parsers.novel.NovelExtensionManager
 import ani.dantotsu.settings.SettingsActivity
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
@@ -26,7 +23,6 @@ import ani.dantotsu.util.Logger
 import com.google.android.material.color.DynamicColors
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
-import eu.kanade.tachiyomi.extension.manga.MangaExtensionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -44,8 +40,6 @@ import uy.kohesive.injekt.api.get
 @SuppressLint("StaticFieldLeak")
 class App : Application() {
     private lateinit var animeExtensionManager: AnimeExtensionManager
-    private lateinit var mangaExtensionManager: MangaExtensionManager
-    private lateinit var novelExtensionManager: NovelExtensionManager
     private lateinit var torrentAddonManager: TorrentAddonManager
     private lateinit var downloadAddonManager: DownloadAddonManager
 
@@ -100,11 +94,7 @@ class App : Application() {
         }
 
         if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 0) {
-            if (BuildConfig.FLAVOR.contains("fdroid")) {
-                PrefManager.setVal(PrefName.CommentsEnabled, 2)
-            } else {
-                PrefManager.setVal(PrefName.CommentsEnabled, 1)
-            }
+            PrefManager.setVal(PrefName.CommentsEnabled, 2)
         }
 
         val scope = CoroutineScope(Dispatchers.IO)
@@ -115,22 +105,6 @@ class App : Application() {
             }
             Logger.log("Anime Extensions: ${animeExtensionManager.installedExtensionsFlow.first()}")
             AnimeSources.init(animeExtensionManager.installedExtensionsFlow)
-        }
-        scope.launch {
-            mangaExtensionManager = Injekt.get()
-            launch {
-                mangaExtensionManager.findAvailableExtensions()
-            }
-            Logger.log("Manga Extensions: ${mangaExtensionManager.installedExtensionsFlow.first()}")
-            MangaSources.init(mangaExtensionManager.installedExtensionsFlow)
-        }
-        scope.launch {
-            novelExtensionManager = Injekt.get()
-            launch {
-                novelExtensionManager.findAvailableExtensions()
-            }
-            Logger.log("Novel Extensions: ${novelExtensionManager.installedExtensionsFlow.first()}")
-            NovelSources.init(novelExtensionManager.allInstalledExtensionsFlow)
         }
         GlobalScope.launch {
             torrentAddonManager = Injekt.get()
