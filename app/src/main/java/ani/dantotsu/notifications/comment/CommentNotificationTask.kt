@@ -154,7 +154,6 @@ class CommentNotificationTask : Task {
                         CommentNotificationWorker.NotificationType.NO_NOTIFICATION -> {
                             PrefManager.removeCustomVal("genre_thumb")
                             PrefManager.removeCustomVal("banner_ANIME_time")
-                            PrefManager.removeCustomVal("banner_MANGA_time")
                             PrefManager.setVal(PrefName.ImageUrl, it.content ?: "")
                             null
                         }

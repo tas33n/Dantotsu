@@ -62,26 +62,21 @@ class AnilistLinkPreviewView @JvmOverloads constructor(
                 "$seasonYear · $score"
             } else seasonYear.ifEmpty {
                 score.ifEmpty {
-                    previewSeasonScore.visibility = GONE
+                    previewSeasonScore.visibility = View.GONE
                     ""
                 }
             }
             val animeData = media.anime
-            val mangaData = media.manga
-            val episodesOrChapters = when {
+            val episodes = when {
                 animeData != null && animeData.totalEpisodes != null -> {
                     val eps = animeData.totalEpisodes
                     if (eps == 0) null else "$eps Episodes"
                 }
-                mangaData != null && mangaData.totalChapters != null -> {
-                    val chaps = mangaData.totalChapters
-                    if (chaps == 0) null else "$chaps Chapters"
-                }
                 else -> null
             }
 
-            if (episodesOrChapters != null) {
-                previewEpisodes.text = episodesOrChapters
+            if (episodes != null) {
+                previewEpisodes.text = episodes
                 previewEpisodes.isVisible = true
             } else {
                 previewEpisodes.isVisible = false

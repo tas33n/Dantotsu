@@ -57,21 +57,6 @@ class AnilistHomeViewModel : ViewModel() {
 
     fun getAnimePlanned(): LiveData<ArrayList<Media>> = animePlanned
 
-    private val mangaContinue: MutableLiveData<ArrayList<Media>> =
-        MutableLiveData<ArrayList<Media>>(null)
-
-    fun getMangaContinue(): LiveData<ArrayList<Media>> = mangaContinue
-
-    private val mangaFav: MutableLiveData<ArrayList<Media>> =
-        MutableLiveData<ArrayList<Media>>(null)
-
-    fun getMangaFav(): LiveData<ArrayList<Media>> = mangaFav
-
-    private val mangaPlanned: MutableLiveData<ArrayList<Media>> =
-        MutableLiveData<ArrayList<Media>>(null)
-
-    fun getMangaPlanned(): LiveData<ArrayList<Media>> = mangaPlanned
-
     private val recommendation: MutableLiveData<ArrayList<Media>> =
         MutableLiveData<ArrayList<Media>>(null)
 
@@ -101,9 +86,6 @@ class AnilistHomeViewModel : ViewModel() {
         res["currentAnime"]?.let { animeContinue.postValue(it) }
         res["favoriteAnime"]?.let { animeFav.postValue(it) }
         res["currentAnimePlanned"]?.let { animePlanned.postValue(it) }
-        res["currentManga"]?.let { mangaContinue.postValue(it) }
-        res["favoriteManga"]?.let { mangaFav.postValue(it) }
-        res["currentMangaPlanned"]?.let { mangaPlanned.postValue(it) }
         res["recommendations"]?.let { recommendation.postValue(it) }
         res["missingSequels"]?.let { missingSequels.postValue(it) }
         res["hidden"]?.let { hidden.postValue(it) }
@@ -134,7 +116,7 @@ class AnilistHomeViewModel : ViewModel() {
 class AnilistAnimeViewModel : ViewModel() {
     var searched = false
     var notSet = true
-    lateinit var aniMangaSearchResults: AniMangaSearchResults
+    lateinit var animeSearchResults: AnimeSearchResults
     private val type = "ANIME"
     private val trending: MutableLiveData<MutableList<Media>> =
         MutableLiveData<MutableList<Media>>(null)
@@ -143,7 +125,7 @@ class AnilistAnimeViewModel : ViewModel() {
     suspend fun loadTrending(i: Int) {
         val (season, year) = Anilist.currentSeasons[i]
         trending.postValue(
-            Anilist.query.searchAniManga(
+            Anilist.query.searchAnime(
                 type,
                 perPage = 12,
                 sort = Anilist.sortBy[2],
@@ -156,9 +138,9 @@ class AnilistAnimeViewModel : ViewModel() {
     }
 
 
-    private val animePopular = MutableLiveData<AniMangaSearchResults?>(null)
+    private val animePopular = MutableLiveData<AnimeSearchResults?>(null)
 
-    fun getPopular(): LiveData<AniMangaSearchResults?> = animePopular
+    fun getPopular(): LiveData<AnimeSearchResults?> = animePopular
     suspend fun loadPopular(
         type: String,
         searchVal: String? = null,
@@ -167,7 +149,7 @@ class AnilistAnimeViewModel : ViewModel() {
         onList: Boolean = true,
     ) {
         animePopular.postValue(
-            Anilist.query.searchAniManga(
+            Anilist.query.searchAnime(
                 type,
                 search = searchVal,
                 onList = if (onList) null else false,
@@ -179,8 +161,8 @@ class AnilistAnimeViewModel : ViewModel() {
     }
 
 
-    suspend fun loadNextPage(r: AniMangaSearchResults) = animePopular.postValue(
-        Anilist.query.searchAniManga(
+    suspend fun loadNextPage(r: AnimeSearchResults) = animePopular.postValue(
+        Anilist.query.searchAnime(
             r.type,
             r.page + 1,
             r.perPage,
@@ -227,131 +209,27 @@ class AnilistAnimeViewModel : ViewModel() {
     }
 }
 
-class AnilistMangaViewModel : ViewModel() {
-    var searched = false
-    var notSet = true
-    lateinit var aniMangaSearchResults: AniMangaSearchResults
-    private val type = "MANGA"
-    private val trending: MutableLiveData<MutableList<Media>> =
-        MutableLiveData<MutableList<Media>>(null)
-
-    fun getTrending(): LiveData<MutableList<Media>> = trending
-    suspend fun loadTrending() =
-        trending.postValue(
-            Anilist.query.searchAniManga(
-                type,
-                perPage = 10,
-                sort = Anilist.sortBy[2],
-                hd = true,
-                adultOnly = PrefManager.getVal(PrefName.AdultOnly)
-            )?.results
-        )
-
-
-    private val mangaPopular = MutableLiveData<AniMangaSearchResults?>(null)
-    fun getPopular(): LiveData<AniMangaSearchResults?> = mangaPopular
-    suspend fun loadPopular(
-        type: String,
-        searchVal: String? = null,
-        genres: ArrayList<String>? = null,
-        sort: String = Anilist.sortBy[1],
-        onList: Boolean = true,
-    ) {
-        mangaPopular.postValue(
-            Anilist.query.searchAniManga(
-                type,
-                search = searchVal,
-                onList = if (onList) null else false,
-                sort = sort,
-                genres = genres,
-                adultOnly = PrefManager.getVal(PrefName.AdultOnly)
-            )
-        )
-    }
-
-
-    suspend fun loadNextPage(r: AniMangaSearchResults) = mangaPopular.postValue(
-        Anilist.query.searchAniManga(
-            r.type,
-            r.page + 1,
-            r.perPage,
-            r.search,
-            r.sort,
-            r.genres,
-            r.tags,
-            r.status,
-            r.source,
-            r.format,
-            r.countryOfOrigin,
-            r.isAdult,
-            r.onList,
-            r.excludedGenres,
-            r.excludedTags,
-            r.startYear,
-            r.seasonYear,
-            r.season,
-            adultOnly = PrefManager.getVal(PrefName.AdultOnly)
-        )
-    )
-
-    var loaded: Boolean = false
-
-    private val popularManga: MutableLiveData<MutableList<Media>> =
-        MutableLiveData<MutableList<Media>>(null)
-
-    fun getPopularManga(): LiveData<MutableList<Media>> = popularManga
-
-    private val popularManhwa: MutableLiveData<MutableList<Media>> =
-        MutableLiveData<MutableList<Media>>(null)
-
-    fun getPopularManhwa(): LiveData<MutableList<Media>> = popularManhwa
-
-    private val popularNovel: MutableLiveData<MutableList<Media>> =
-        MutableLiveData<MutableList<Media>>(null)
-
-    fun getPopularNovel(): LiveData<MutableList<Media>> = popularNovel
-
-    private val topRatedManga: MutableLiveData<MutableList<Media>> =
-        MutableLiveData<MutableList<Media>>(null)
-
-    fun getTopRated(): LiveData<MutableList<Media>> = topRatedManga
-
-    private val mostFavManga: MutableLiveData<MutableList<Media>> =
-        MutableLiveData<MutableList<Media>>(null)
-
-    fun getMostFav(): LiveData<MutableList<Media>> = mostFavManga
-    suspend fun loadAll() {
-        val list = Anilist.query.loadMangaList()
-        popularManga.postValue(list["trendingManga"])
-        popularManhwa.postValue(list["trendingManhwa"])
-        popularNovel.postValue(list["trendingNovel"])
-        topRatedManga.postValue(list["topRated"])
-        mostFavManga.postValue(list["mostFav"])
-    }
-}
-
 class AnilistSearch : ViewModel() {
 
     enum class SearchType {
-        ANIME, MANGA, CHARACTER, STAFF, STUDIO, USER;
+        ANIME, CHARACTER, STAFF, STUDIO, USER;
 
         companion object {
 
             fun SearchType.toAnilistString(): String {
                 return when (this) {
                     ANIME -> "ANIME"
-                    MANGA -> "MANGA"
                     CHARACTER -> "CHARACTER"
                     STAFF -> "STAFF"
                     STUDIO -> "STUDIO"
                     USER -> "USER"
+                    else -> throw IllegalArgumentException("Invalid search type")
                 }
             }
 
             fun fromString(string: String): SearchType {
                 return when (string.uppercase()) {
                     "ANIME" -> ANIME
-                    "MANGA" -> MANGA
                     "CHARACTER" -> CHARACTER
                     "STAFF" -> STAFF
                     "STUDIO" -> STUDIO
@@ -364,9 +242,9 @@ class AnilistSearch : ViewModel() {
 
     var searched = false
     var notSet = true
-    lateinit var aniMangaSearchResults: AniMangaSearchResults
-    private val aniMangaResult: MutableLiveData<AniMangaSearchResults?> =
-        MutableLiveData<AniMangaSearchResults?>(null)
+    lateinit var animeSearchResults: AnimeSearchResults
+    private val animeResult: MutableLiveData<AnimeSearchResults?> =
+        MutableLiveData<AnimeSearchResults?>(null)
 
     lateinit var characterSearchResults: CharacterSearchResults
     private val characterResult: MutableLiveData<CharacterSearchResults?> =
@@ -386,17 +264,18 @@ class AnilistSearch : ViewModel() {
 
     fun <T> getSearch(type: SearchType): MutableLiveData<T?> {
         return when (type) {
-            SearchType.ANIME, SearchType.MANGA -> aniMangaResult as MutableLiveData<T?>
+            SearchType.ANIME -> animeResult as MutableLiveData<T?>
             SearchType.CHARACTER -> characterResult as MutableLiveData<T?>
             SearchType.STUDIO -> studioResult as MutableLiveData<T?>
             SearchType.STAFF -> staffResult as MutableLiveData<T?>
             SearchType.USER -> userResult as MutableLiveData<T?>
+            else -> animeResult as MutableLiveData<T?>
         }
     }
 
     suspend fun loadSearch(type: SearchType) {
         when (type) {
-            SearchType.ANIME, SearchType.MANGA -> loadAniMangaSearch(aniMangaSearchResults)
+            SearchType.ANIME -> loadAnimeSearch(animeSearchResults)
             SearchType.CHARACTER -> loadCharacterSearch(characterSearchResults)
             SearchType.STUDIO -> loadStudiosSearch(studioSearchResults)
             SearchType.STAFF -> loadStaffSearch(staffSearchResults)
@@ -406,7 +285,7 @@ class AnilistSearch : ViewModel() {
 
     suspend fun loadNextPage(type: SearchType) {
         when (type) {
-            SearchType.ANIME, SearchType.MANGA -> loadNextAniMangaPage(aniMangaSearchResults)
+            SearchType.ANIME -> loadNextAnimePage(animeSearchResults)
             SearchType.CHARACTER -> loadNextCharacterPage(characterSearchResults)
             SearchType.STUDIO -> loadNextStudiosPage(studioSearchResults)
             SearchType.STAFF -> loadNextStaffPage(staffSearchResults)
@@ -416,7 +295,7 @@ class AnilistSearch : ViewModel() {
 
     fun hasNextPage(type: SearchType): Boolean {
         return when (type) {
-            SearchType.ANIME, SearchType.MANGA -> aniMangaSearchResults.hasNextPage
+            SearchType.ANIME -> animeSearchResults.hasNextPage
             SearchType.CHARACTER -> characterSearchResults.hasNextPage
             SearchType.STUDIO -> studioSearchResults.hasNextPage
             SearchType.STAFF -> staffSearchResults.hasNextPage
@@ -426,7 +305,7 @@ class AnilistSearch : ViewModel() {
 
     fun resultsIsNotEmpty(type: SearchType): Boolean {
         return when (type) {
-            SearchType.ANIME, SearchType.MANGA -> aniMangaSearchResults.results.isNotEmpty()
+            SearchType.ANIME -> animeSearchResults.results.isNotEmpty()
             SearchType.CHARACTER -> characterSearchResults.results.isNotEmpty()
             SearchType.STUDIO -> studioSearchResults.results.isNotEmpty()
             SearchType.STAFF -> staffSearchResults.results.isNotEmpty()
@@ -436,7 +315,7 @@ class AnilistSearch : ViewModel() {
 
     fun size(type: SearchType): Int {
         return when (type) {
-            SearchType.ANIME, SearchType.MANGA -> aniMangaSearchResults.results.size
+            SearchType.ANIME -> animeSearchResults.results.size
             SearchType.CHARACTER -> characterSearchResults.results.size
             SearchType.STUDIO -> studioSearchResults.results.size
             SearchType.STAFF -> staffSearchResults.results.size
@@ -446,7 +325,7 @@ class AnilistSearch : ViewModel() {
 
     fun clearResults(type: SearchType) {
         when (type) {
-            SearchType.ANIME, SearchType.MANGA -> aniMangaSearchResults.results.clear()
+            SearchType.ANIME -> animeSearchResults.results.clear()
             SearchType.CHARACTER -> characterSearchResults.results.clear()
             SearchType.STUDIO -> studioSearchResults.results.clear()
             SearchType.STAFF -> staffSearchResults.results.clear()
@@ -454,8 +333,8 @@ class AnilistSearch : ViewModel() {
         }
     }
 
-    private suspend fun loadAniMangaSearch(r: AniMangaSearchResults) = aniMangaResult.postValue(
-        Anilist.query.searchAniManga(
+    private suspend fun loadAnimeSearch(r: AnimeSearchResults) = animeResult.postValue(
+        Anilist.query.searchAnime(
             r.type,
             r.page,
             r.perPage,
@@ -505,8 +384,8 @@ class AnilistSearch : ViewModel() {
         )
     )
 
-    private suspend fun loadNextAniMangaPage(r: AniMangaSearchResults) = aniMangaResult.postValue(
-        Anilist.query.searchAniManga(
+    private suspend fun loadNextAnimePage(r: AnimeSearchResults) = animeResult.postValue(
+        Anilist.query.searchAnime(
             r.type,
             r.page + 1,
             r.perPage,
@@ -579,11 +458,6 @@ class GenresViewModel : ViewModel() {
 
 class ProfileViewModel : ViewModel() {
 
-    private val mangaFav: MutableLiveData<ArrayList<Media>> =
-        MutableLiveData<ArrayList<Media>>(null)
-
-    fun getMangaFav(): LiveData<ArrayList<Media>> = mangaFav
-
     private val animeFav: MutableLiveData<ArrayList<Media>> =
         MutableLiveData<ArrayList<Media>>(null)
 
@@ -591,12 +465,6 @@ class ProfileViewModel : ViewModel() {
 
     suspend fun setData(id: Int) {
         val res = Anilist.query.initProfilePage(id)
-        val mangaList = res?.data?.favoriteManga?.favourites?.manga?.edges?.mapNotNull {
-            it.node?.let { i ->
-                Media(i).apply { isFav = true }
-            }
-        }
-        mangaFav.postValue(ArrayList(mangaList ?: arrayListOf()))
         val animeList = res?.data?.favoriteAnime?.favourites?.anime?.edges?.mapNotNull {
             it.node?.let { i ->
                 Media(i).apply { isFav = true }
@@ -607,7 +475,6 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun refresh() {
-        mangaFav.postValue(mangaFav.value)
         animeFav.postValue(animeFav.value)
 
     }

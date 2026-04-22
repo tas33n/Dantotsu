@@ -19,8 +19,6 @@ import eu.kanade.tachiyomi.animesource.model.SAnime
 import eu.kanade.tachiyomi.animesource.model.SAnimeImpl
 import eu.kanade.tachiyomi.animesource.model.SEpisode
 import eu.kanade.tachiyomi.animesource.model.SEpisodeImpl
-import eu.kanade.tachiyomi.source.model.SChapter
-import eu.kanade.tachiyomi.source.model.SChapterImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
@@ -152,9 +150,6 @@ class UpcomingRemoteViewsFactory(private val context: Context) :
     private fun serializeMedia(media: List<Media>): String? {
         return try {
             val gson = GsonBuilder()
-                .registerTypeAdapter(SChapter::class.java, InstanceCreator<SChapter> {
-                    SChapterImpl()
-                })
                 .registerTypeAdapter(SAnime::class.java, InstanceCreator<SAnime> {
                     SAnimeImpl()
                 })
@@ -173,9 +168,6 @@ class UpcomingRemoteViewsFactory(private val context: Context) :
     private fun deserializeMedia(json: String): List<Media>? {
         return try {
             val gson = GsonBuilder()
-                .registerTypeAdapter(SChapter::class.java, InstanceCreator<SChapter> {
-                    SChapterImpl()
-                })
                 .registerTypeAdapter(SAnime::class.java, InstanceCreator<SAnime> {
                     SAnimeImpl()
                 })

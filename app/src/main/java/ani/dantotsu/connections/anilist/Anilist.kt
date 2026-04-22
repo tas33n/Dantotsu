@@ -31,7 +31,6 @@ object Anilist {
     var avatar: String? = null
     var bg: String? = null
     var episodesWatched: Int? = null
-    var chapterRead: Int? = null
     var unreadNotificationCount: Int = 0
 
     var genres: ArrayList<String>? = null
@@ -50,7 +49,6 @@ object Anilist {
     var activityMergeTime: Int? = null
     var timezone: String? = null
     var animeCustomLists: List<String>? = null
-    var mangaCustomLists: List<String>? = null
 
     val sortBy = listOf(
         "SCORE_DESC",
@@ -64,18 +62,11 @@ object Anilist {
 
     val source = listOf(
         "ORIGINAL",
-        "MANGA",
-        "LIGHT NOVEL",
-        "VISUAL NOVEL",
         "VIDEO GAME",
         "OTHER",
-        "NOVEL",
-        "DOUJINSHI",
         "ANIME",
-        "WEB NOVEL",
         "LIVE ACTION",
         "GAME",
-        "COMIC",
         "MULTIMEDIA PROJECT",
         "PICTURE BOOK"
     )
@@ -87,24 +78,12 @@ object Anilist {
         "CANCELLED"
     )
 
-    val mangaStatus = listOf(
-        "FINISHED",
-        "RELEASING",
-        "NOT YET RELEASED",
-        "HIATUS",
-        "CANCELLED"
-    )
-
     val seasons = listOf(
         "WINTER", "SPRING", "SUMMER", "FALL"
     )
 
     val animeFormats = listOf(
         "TV", "TV SHORT", "MOVIE", "SPECIAL", "OVA", "ONA", "MUSIC"
-    )
-
-    val mangaFormats = listOf(
-        "MANGA", "NOVEL", "ONE SHOT"
     )
 
     val authorRoles = listOf(
@@ -272,7 +251,6 @@ object Anilist {
         avatar = null
         bg = null
         episodesWatched = null
-        chapterRead = null
         PrefManager.removeVal(PrefName.AnilistToken)
         // Reset per-section notification counts
         PrefManager.setVal(PrefName.UnreadUserNotifications, 0)

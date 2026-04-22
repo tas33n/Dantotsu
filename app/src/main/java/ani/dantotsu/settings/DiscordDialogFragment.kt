@@ -23,7 +23,6 @@ class DiscordDialogFragment : BottomSheetDialogFragment() {
     private var _binding: BottomSheetDiscordRpcBinding? = null
     private val binding get() = _binding!!
 
-    private var isMangaTabSelected = false
     private var isLoadingSettings = false
     private var tokenRefreshJob: Job? = null
 
@@ -49,11 +48,7 @@ class DiscordDialogFragment : BottomSheetDialogFragment() {
         // Listeners for Controls
         binding.switchShowIcon.setOnCheckedChangeListener { _, isChecked ->
             if (isLoadingSettings) return@setOnCheckedChangeListener
-            if (isMangaTabSelected) {
-                PrefManager.setVal(PrefName.DiscordRPCShowIconManga, isChecked)
-            } else {
-                PrefManager.setVal(PrefName.DiscordRPCShowIconAnime, isChecked)
-            }
+            PrefManager.setVal(PrefName.DiscordRPCShowIconAnime, isChecked)
             updatePreview()
         }
 
@@ -66,27 +61,12 @@ class DiscordDialogFragment : BottomSheetDialogFragment() {
                 binding.radioMal.id -> "mal"
                 else -> "dantotsu"
             }
-            if (isMangaTabSelected) {
-                PrefManager.setVal(PrefName.DiscordRPCModeManga, mode)
-            } else {
-                PrefManager.setVal(PrefName.DiscordRPCModeAnime, mode)
-            }
+            PrefManager.setVal(PrefName.DiscordRPCModeAnime, mode)
             updatePreview()
         }
 
-        // Setup Tabs
-        binding.mediaTypeTabGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) {
-                isMangaTabSelected = checkedId == binding.btnTabManga.id
-                loadSettingsForCurrentTab()
-                updatePreview()
-            }
-        }
-
-        // Initialize with Anime tab
-        binding.mediaTypeTabGroup.check(binding.btnTabAnime.id)
-        isMangaTabSelected = false
-        loadSettingsForCurrentTab()
+        // Initialize
+        loadSettings()
         updatePreview()
         updateTokenExpiry()
 
@@ -131,15 +111,10 @@ class DiscordDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun loadSettingsForCurrentTab() {
+    private fun loadSettings() {
         isLoadingSettings = true
 
-        val mode = if (isMangaTabSelected) {
-            PrefManager.getVal(PrefName.DiscordRPCModeManga, "dantotsu")
-        } else {
-            PrefManager.getVal(PrefName.DiscordRPCModeAnime, "dantotsu")
-        }
-
+        val mode = PrefManager.getVal(PrefName.DiscordRPCModeAnime, "dantotsu")
         when (mode) {
             "nothing" -> binding.radioNothing.isChecked = true
             "dantotsu" -> binding.radioDantotsu.isChecked = true
@@ -148,32 +123,20 @@ class DiscordDialogFragment : BottomSheetDialogFragment() {
             else -> binding.radioDantotsu.isChecked = true
         }
 
-        val showIcon = if (isMangaTabSelected) {
-            PrefManager.getVal(PrefName.DiscordRPCShowIconManga, true)
-        } else {
-            PrefManager.getVal(PrefName.DiscordRPCShowIconAnime, true)
-        }
+        val showIcon = PrefManager.getVal(PrefName.DiscordRPCShowIconAnime, true)
         binding.switchShowIcon.isChecked = showIcon
 
         isLoadingSettings = false
     }
 
     private fun updatePreview() {
-        val mode = if (isMangaTabSelected) PrefManager.getVal(PrefName.DiscordRPCModeManga, "dantotsu")
-                   else PrefManager.getVal(PrefName.DiscordRPCModeAnime, "dantotsu")
-        val useIcon = if (isMangaTabSelected) PrefManager.getVal(PrefName.DiscordRPCShowIconManga, true)
-                      else PrefManager.getVal(PrefName.DiscordRPCShowIconAnime, true)
+        val mode = PrefManager.getVal(PrefName.DiscordRPCModeAnime, "dantotsu")
+        val useIcon = PrefManager.getVal(PrefName.DiscordRPCShowIconAnime, true)
 
-        // Mock data based on tab
-        if (isMangaTabSelected) {
-            binding.previewActivityName.text = "Reading One Piece"
-            binding.previewDetails.text = "Chapter 1100"
-            binding.previewState.text = "Chapter : 1100/??"
-        } else {
-            binding.previewActivityName.text = "Watching One-Punch Man Season 3"
-            binding.previewDetails.text = "Episode 1: Strategy Meeting"
-            binding.previewState.text = "Episode : 1/??"
-        }
+        // Mock data
+        binding.previewActivityName.text = "Watching One-Punch Man Season 3"
+        binding.previewDetails.text = "Episode 1: Strategy Meeting"
+        binding.previewState.text = "Episode : 1/??"
 
         // Large Image
         Glide.with(this).load(R.mipmap.ic_launcher).into(binding.previewLargeImage)

@@ -16,7 +16,7 @@ interface SearchResults<T> {
     var hasNextPage: Boolean
 }
 
-data class AniMangaSearchResults(
+data class AnimeSearchResults(
     val type: String,
     var isAdult: Boolean,
     var onList: Boolean? = null,
@@ -30,8 +30,8 @@ data class AniMangaSearchResults(
     var status: String? = null,
     var source: String? = null,
     var format: String? = null,
-    var seasonYear: Int? = null,
     var startYear: Int? = null,
+    var seasonYear: Int? = null,
     var season: String? = null,
     override var search: String? = null,
     override var page: Int = 1,
@@ -67,11 +67,11 @@ data class AniMangaSearchResults(
         season?.let {
             list.add(SearchChip("SEASON", it))
         }
-        startYear?.let {
-            list.add(SearchChip("START_YEAR", it.toString()))
-        }
         seasonYear?.let {
             list.add(SearchChip("SEASON_YEAR", it.toString()))
+        }
+        startYear?.let {
+            list.add(SearchChip("START_YEAR", it.toString()))
         }
         genres?.forEach {
             list.add(SearchChip("GENRE", it))

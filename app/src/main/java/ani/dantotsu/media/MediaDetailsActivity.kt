@@ -42,8 +42,6 @@ import ani.dantotsu.initActivity
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.anime.AnimeWatchFragment
 import ani.dantotsu.media.comments.CommentsFragment
-import ani.dantotsu.media.manga.MangaReadFragment
-import ani.dantotsu.media.novel.NovelReadFragment
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.setBaseline
 import ani.dantotsu.openLinkInBrowser
@@ -224,7 +222,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 media.isFav
             ) {
                 media.isFav = it
-                Anilist.mutation.toggleFav(media.anime != null, media.id)
+                Anilist.mutation.toggleFav(true, media.id)
                 Refresh.all()
             }
         } else {
@@ -239,40 +237,26 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 val white =
                     this@MediaDetailsActivity.getThemeColor(com.google.android.material.R.attr.colorOnBackground)
                 if (media.userStatus != null) {
-                    append(if (media.anime != null) getString(R.string.watched_num) else getString(R.string.read_num))
+                    append(getString(R.string.watched_num))
                     val colorSecondary =
                         getThemeColor(com.google.android.material.R.attr.colorSecondary)
                     bold { color(colorSecondary) { append("${media.userProgress}") } }
-                    append(
-                        if (media.anime != null) getString(R.string.episodes_out_of) else getString(
-                            R.string.chapters_out_of
-                        )
-                    )
+                    append(getString(R.string.episodes_out_of))
                 } else {
-                    append(
-                        if (media.anime != null) getString(R.string.episodes_total_of) else getString(
-                            R.string.chapters_total_of
-                        )
-                    )
+                    append(getString(R.string.episodes_total_of))
                 }
-                if (media.anime != null) {
-                    if (media.anime!!.nextAiringEpisode != null) {
-                        bold { color(white) { append("${media.anime!!.nextAiringEpisode}") } }
-                        append(" / ")
-                    }
-                    bold { color(white) { append("${media.anime!!.totalEpisodes ?: "??"}") } }
-                } else
-                    bold { color(white) { append("${media.manga!!.totalChapters ?: "??"}") } }
+                if (media.anime!!.nextAiringEpisode != null) {
+                    bold { color(white) { append("${media.anime!!.nextAiringEpisode}") } }
+                    append(" / ")
+                }
+                bold { color(white) { append("${media.anime!!.totalEpisodes ?: "??"}") } }
             }
             binding.mediaTotal.text = text
         }
 
         fun progress() {
             val statuses: Array<String> = resources.getStringArray(R.array.status)
-            val statusStrings =
-                if (media.manga == null) resources.getStringArray(R.array.status_anime) else resources.getStringArray(
-                    R.array.status_manga
-                )
+            val statusStrings = resources.getStringArray(R.array.status_anime)
             val userStatus =
                 if (media.userStatus != null) statusStrings[statuses.indexOf(media.userStatus)] else statusStrings[0]
 
@@ -324,36 +308,20 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
             }
         }
         adult = media.isAdult
-        if (media.anime != null) {
-            viewPager.adapter =
-                ViewPagerAdapter(
-                    supportFragmentManager,
-                    lifecycle,
-                    SupportedMedia.ANIME,
-                    media,
-                    intent.getIntExtra("commentId", -1)
-                )
-        } else if (media.manga != null) {
-            viewPager.adapter = ViewPagerAdapter(
+        viewPager.adapter =
+            ViewPagerAdapter(
                 supportFragmentManager,
                 lifecycle,
-                if (media.format == "NOVEL") SupportedMedia.NOVEL else SupportedMedia.MANGA,
+                SupportedMedia.ANIME,
                 media,
                 intent.getIntExtra("commentId", -1)
             )
-            anime = false
-        }
         selected = if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) != 1 && media.selected!!.window == 2) 1 else media.selected!!.window
         binding.mediaTitle.translationX = -screenWidth
 
         val infoTab = navBar.createTab(R.drawable.ic_round_info_24, R.string.info, R.id.info)
-        val watchTab = if (anime) {
-            navBar.createTab(R.drawable.ic_round_movie_filter_24, R.string.watch, R.id.watch)
-        } else if (media.format == "NOVEL") {
-            navBar.createTab(R.drawable.ic_round_book_24, R.string.read, R.id.read)
-        } else {
-            navBar.createTab(R.drawable.ic_round_import_contacts_24, R.string.read, R.id.read)
-        }
+        val watchTab = navBar.createTab(R.drawable.ic_round_movie_filter_24, R.string.watch, R.id.watch)
+
         val commentTab =
             navBar.createTab(R.drawable.ic_round_comment_24, R.string.comments, R.id.comment)
         navBar.addTab(infoTab)
@@ -430,7 +398,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     }
 
     private enum class SupportedMedia {
-        ANIME, MANGA, NOVEL
+        ANIME
     }
 
     // ViewPager
@@ -447,11 +415,7 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
 
         override fun createFragment(position: Int): Fragment = when (position) {
             0 -> MediaInfoFragment()
-            1 -> when (mediaType) {
-                SupportedMedia.ANIME -> AnimeWatchFragment()
-                SupportedMedia.MANGA -> MangaReadFragment()
-                SupportedMedia.NOVEL -> NovelReadFragment()
-            }
+            1 -> AnimeWatchFragment()
 
             2 -> { // Index 2
                 if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) {

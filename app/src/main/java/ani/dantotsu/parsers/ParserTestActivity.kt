@@ -56,55 +56,19 @@ class ParserTestActivity : AppCompatActivity() {
             }
             extensionsToTest.clear()
             adapter.clear()
-            when (ExtensionTestSettingsBottomDialog.extensionType) {
-                "anime" -> {
-                    ExtensionTestSettingsBottomDialog.extensionsToTest.forEach { name ->
-                        val extension =
-                            AnimeSources.list.find { source -> source.name == name }?.get?.value
-                        extension?.let {
-                            extensionsToTest.add(
-                                ExtensionTestItem(
-                                    "anime",
-                                    ExtensionTestSettingsBottomDialog.testType,
-                                    it,
-                                    ExtensionTestSettingsBottomDialog.searchQuery
-                                )
+            if (ExtensionTestSettingsBottomDialog.extensionType == "anime") {
+                ExtensionTestSettingsBottomDialog.extensionsToTest.forEach { name ->
+                    val extension =
+                        AnimeSources.list.find { source -> source.name == name }?.get?.value
+                    extension?.let {
+                        extensionsToTest.add(
+                            ExtensionTestItem(
+                                "anime",
+                                ExtensionTestSettingsBottomDialog.testType,
+                                it,
+                                ExtensionTestSettingsBottomDialog.searchQuery
                             )
-                        }
-                    }
-                }
-
-                "manga" -> {
-                    ExtensionTestSettingsBottomDialog.extensionsToTest.forEach { name ->
-                        val extension =
-                            MangaSources.list.find { source -> source.name == name }?.get?.value
-                        extension?.let {
-                            extensionsToTest.add(
-                                ExtensionTestItem(
-                                    "manga",
-                                    ExtensionTestSettingsBottomDialog.testType,
-                                    it,
-                                    ExtensionTestSettingsBottomDialog.searchQuery
-                                )
-                            )
-                        }
-                    }
-                }
-
-                "novel" -> {
-                    ExtensionTestSettingsBottomDialog.extensionsToTest.forEach { name ->
-                        val extension =
-                            NovelSources.list.find { source -> source.name == name }?.get?.value
-                        extension?.let {
-                            extensionsToTest.add(
-                                ExtensionTestItem(
-                                    "novel",
-                                    ExtensionTestSettingsBottomDialog.testType,
-                                    it,
-                                    ExtensionTestSettingsBottomDialog.searchQuery
-                                )
-                            )
-                        }
+                        )
                     }
                 }
             }

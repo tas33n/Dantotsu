@@ -84,7 +84,7 @@ class AnimePageAdapter : RecyclerView.Adapter<AnimePageAdapter.AnimePageViewHold
         trendingBinding.searchBar.hint = binding.root.context.getString(R.string.search)
         trendingBinding.searchBarText.setOnClickListener {
             val context = binding.root.context
-            if (PrefManager.getVal(PrefName.AniMangaSearchDirect) && Anilist.token != null) {
+            if (PrefManager.getVal(PrefName.AnimeSearchDirect) && Anilist.token != null) {
                 ContextCompat.startActivity(
                     context,
                     Intent(context, SearchActivity::class.java).putExtra("type", "ANIME"),

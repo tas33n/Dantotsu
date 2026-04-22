@@ -43,7 +43,7 @@ object RPCManager {
     private var heartbeatJob: Job? = null
     private const val HEARTBEAT_INTERVAL_MS = 9 * 60 * 1000L
 
-    /** Auto-clear job \u2014 clears the RPC if the video is left paused for too long. */
+    /** Auto-clear job — clears the RPC if the video is left paused for too long. */
     private var autoClearJob: Job? = null
     private const val AUTO_CLEAR_INTERVAL_MS = 1 * 60 * 1000L
 
@@ -51,7 +51,7 @@ object RPCManager {
     private var serviceStarted = false
 
 
-    // ΓöÇΓöÇΓöÇ Public API ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ——— Public API ————————————————————————————————————————————————————————————————————————
 
     /**
      * Set / update Discord Rich Presence.
@@ -68,7 +68,6 @@ object RPCManager {
                 Logger.log("RPCManager: Failed to start DiscordService (missing manifest entry?): ${e.message}")
             }
         }
-        // Cancel any pending auto-clear since we're updating presence
 
         // Debounce: only the last call within 500ms actually fires
         debounceJob?.cancel()
@@ -83,7 +82,7 @@ object RPCManager {
                 Logger.log("RPCManager: Headless RPC update succeeded.")
             }.onFailure { e ->
                 if (e is kotlinx.coroutines.CancellationException) throw e
-                Logger.log("RPCManager: HeadlessRPC failed \u2013 ${e.message}")
+                Logger.log("RPCManager: HeadlessRPC failed – ${e.message}")
             }
 
             // Schedule heartbeat or auto-clear based on playback state
@@ -91,7 +90,7 @@ object RPCManager {
             autoClearJob?.cancel()
 
             if (isPaused) {
-                // If paused, schedule an auto-cleanup after 5 minutes
+                // If paused, schedule an auto-cleanup after timeout
                 autoClearJob = scope.launch {
                     delay(AUTO_CLEAR_INTERVAL_MS)
                     Logger.log("RPCManager: Auto-clearing Headless RPC due to pause timeout.")
@@ -107,7 +106,7 @@ object RPCManager {
                             ensureHeadlessRpc(context)?.newActivity(activity)
                         }.onFailure { e ->
                             if (e is kotlinx.coroutines.CancellationException) throw e
-                            Logger.log("RPCManager: HeadlessRPC heartbeat failed \u2013 ${e.message}")
+                            Logger.log("RPCManager: HeadlessRPC heartbeat failed – ${e.message}")
                         }
                     }
                 }
@@ -124,9 +123,6 @@ object RPCManager {
         heartbeatJob?.cancel()
         autoClearJob?.cancel()
         
-        // Delay stopping the service. If the app is being abruptly killed (swiped from Recents),
-        // onTaskRemoved will fire before 2 seconds elapse. If it's a normal exit (user pressed Back),
-        // the service will gracefully stop after 2 seconds, preventing Android from leaving zombie service records.
         scope.launch {
             delay(2000)
             runCatching { 
@@ -149,10 +145,6 @@ object RPCManager {
 
     /**
      * Clear presence synchronously when the app is swiped from Recents.
-     * We use a dedicated Thread and strictly block process termination 
-     * for up to 2 seconds to guarantee the HTTP request leaves the device.
-     * This uses a raw OkHttp request to completely bypass Coroutine Mutexes
-     * and suspend functions, which can easily deadlock during process death.
      */
     fun clearPresenceOnKill(context: Context) {
         debounceJob?.cancel()
@@ -164,7 +156,6 @@ object RPCManager {
         var sessionToken = rpc?.activityToken
 
         if (accessToken == null || sessionToken == null) {
-            // App was resurrected specifically for onTaskRemoved! Reconstruct from cache.
             val discordDir = File(context.filesDir, "discord")
             accessToken = runCatching { discordDir.resolve("discord_access.txt").readText() }.getOrNull()
             sessionToken = PrefManager.getNullableCustomVal("discord_activity_token", null, String::class.java)
@@ -180,7 +171,6 @@ object RPCManager {
                 Logger.log("RPCManager: App kill emergency raw cleanup starting...")
                 val client = DiscordHttpClient.instance
 
-                // 2. Delete session
                 val deletePayload = "{\"token\":\"$sessionToken\"}"
                 val delReq = okhttp3.Request.Builder()
                     .url("https://discord.com/api/v10/users/@me/headless-sessions/delete")
@@ -204,9 +194,6 @@ object RPCManager {
         }
         thread.start()
         
-        // Block the main thread for max 2 seconds. 
-        // This physically prevents Android from terminating the process 
-        // until the OkHttp request finishes or the 2 seconds elapse.
         try {
             thread.join(2000) 
         } catch (e: InterruptedException) {
@@ -233,7 +220,7 @@ object RPCManager {
         return headlessRpc?.tokenManager?.getTokenExpiresAt() ?: 0L
     }
 
-    // ΓöÇΓöÇΓöÇ Private helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ——— Private helpers ——————————————————————————————————————————————————————————————————————
 
     private fun ensureHeadlessRpc(context: Context): HeadlessRPC? {
         val token = Discord.token ?: return null
@@ -249,17 +236,10 @@ object RPCManager {
 
     /**
      * Convert [RPC.Companion.RPCData] to a [DiscordActivity] for the headless API.
-     *
-     * Discord resolves external image URLs server-side, so we pass URLs directly
-     * (no need to proxy through /external-assets).
      */
     private suspend fun buildDiscordActivity(data: RPC.Companion.RPCData): DiscordActivity {
-        val isManga = data.type == RPC.Type.WATCHING &&
-                (data.state?.contains("Reading", ignoreCase = true) == true ||
-                        data.state?.contains("Chapter", ignoreCase = true) == true)
-
-        val mode = if (isManga) PrefManager.getVal(PrefName.DiscordRPCModeManga, "dantotsu") else PrefManager.getVal(PrefName.DiscordRPCModeAnime, "dantotsu")
-        val useIconPref = if (isManga) PrefManager.getVal<Boolean>(PrefName.DiscordRPCShowIconManga, true) else PrefManager.getVal<Boolean>(PrefName.DiscordRPCShowIconAnime, true)
+        val mode = PrefManager.getVal(PrefName.DiscordRPCModeAnime, "dantotsu")
+        val useIconPref = PrefManager.getVal<Boolean>(PrefName.DiscordRPCShowIconAnime, true)
 
         // Select Small Icon based on mode
         val (smallIconUrl, smallIconText) = if (useIconPref && mode != "nothing") {

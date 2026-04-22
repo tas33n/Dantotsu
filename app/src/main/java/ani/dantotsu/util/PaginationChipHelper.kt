@@ -41,9 +41,9 @@ object PaginationChipHelper {
                 )
             }
 
-            val startChapterString = MediaNameAdapter.findChapterNumber(names[limit * position])?.let { "Ch.%.1f".format(it) } ?: names[limit * position]
-            val endChapterString = MediaNameAdapter.findChapterNumber(names[last - 1])?.let { "Ch.%.1f".format(it) } ?: names[last - 1]
-            chip.text = "$startChapterString - $endChapterString"
+            val startEpisodeString = MediaNameAdapter.findEpisodeNumber(names[limit * position])?.let { "Ep.%.1f".format(it) } ?: names[limit * position]
+            val endEpisodeString = MediaNameAdapter.findEpisodeNumber(names[last - 1])?.let { "Ep.%.1f".format(it) } ?: names[last - 1]
+            chip.text = "$startEpisodeString - $endEpisodeString"
             chip.setTextColor(
                 ContextCompat.getColorStateList(
                     context,

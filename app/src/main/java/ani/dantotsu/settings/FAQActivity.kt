@@ -96,11 +96,6 @@ class FAQActivity : AppCompatActivity() {
                 currContext()?.getString(R.string.answer_13) ?: ""
             ),
             Triple(
-                R.drawable.ic_round_art_track_24,
-                currContext()?.getString(R.string.question_14) ?: "",
-                currContext()?.getString(R.string.answer_14) ?: ""
-            ),
-            Triple(
                 R.drawable.ic_round_video_settings_24,
                 currContext()?.getString(R.string.question_15) ?: "",
                 currContext()?.getString(R.string.answer_15) ?: ""

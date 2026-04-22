@@ -12,7 +12,6 @@ object MediaNameAdapter {
         "(episode|episodio|ep|e)${REGEX_ITEM}\\(?\\s*(sub|subbed|dub|dubbed)*\\s*\\)?\\s*"
     private const val REGEX_SEASON = "(season|s)[\\s:.\\-]*(\\d+)[\\s:.\\-]*"
     private const val REGEX_SUBDUB = "^(soft)?[\\s-]*(sub|dub|mixed)(bed|s)?\\s*$"
-    private const val REGEX_CHAPTER = "(chapter|chap|ch|c)${REGEX_ITEM}"
 
     fun setSubDub(text: String, typeToSetTo: SubDubType): String? {
         val subdubPattern: Pattern = Pattern.compile(REGEX_SUBDUB, Pattern.CASE_INSENSITIVE)
@@ -122,25 +121,6 @@ object MediaNameAdapter {
             }
         } else {
             removedNumber
-        }
-    }
-
-    fun findChapterNumber(text: String): Float? {
-        val pattern: Pattern = Pattern.compile(REGEX_CHAPTER, Pattern.CASE_INSENSITIVE)
-        val matcher: Matcher = pattern.matcher(text)
-
-        return if (matcher.find()) {
-            matcher.group(2)?.toFloat()
-        } else {
-            val failedChapterNumberPattern: Pattern =
-                Pattern.compile(REGEX_PART_NUMBER, Pattern.CASE_INSENSITIVE)
-            val failedChapterNumberMatcher: Matcher =
-                failedChapterNumberPattern.matcher(text)
-            if (failedChapterNumberMatcher.find()) {
-                failedChapterNumberMatcher.group(1)?.toFloat()
-            } else {
-                text.toFloatOrNull()
-            }
         }
     }
 }

@@ -68,10 +68,10 @@ class ListActivity : AppCompatActivity() {
         }
         setContentView(binding.root)
 
-        val anime = intent.getBooleanExtra("anime", true)
+        val anime = true
         binding.listTitle.text = getString(
             R.string.user_list, intent.getStringExtra("username"),
-            if (anime) getString(R.string.anime) else getString(R.string.manga)
+            getString(R.string.anime)
         )
         binding.listTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -85,7 +85,6 @@ class ListActivity : AppCompatActivity() {
         val model: ListViewModel by viewModels()
         model.getLists().observe(this) {
             val defaultKeys = listOf(
-                "Reading",
                 "Watching",
                 "Completed",
                 "Paused",
@@ -93,7 +92,6 @@ class ListActivity : AppCompatActivity() {
                 "Planning",
                 "Favourites",
                 "Rewatching",
-                "Rereading",
                 "All"
             )
             val userKeys: Array<String> = resources.getStringArray(R.array.keys)
@@ -118,7 +116,6 @@ class ListActivity : AppCompatActivity() {
                 scope.launch {
                     withContext(Dispatchers.IO) {
                         model.loadLists(
-                            anime,
                             intent.getIntExtra("userId", 0)
                         )
                     }
@@ -138,7 +135,7 @@ class ListActivity : AppCompatActivity() {
                     else -> null
                 }
                 PrefManager.setVal(
-                    if (anime) PrefName.AnimeListSortOrder else PrefName.MangaListSortOrder,
+                    PrefName.AnimeListSortOrder,
                     sort ?: ""
                 )
                 binding.listProgressBar.visibility = View.VISIBLE
@@ -146,7 +143,6 @@ class ListActivity : AppCompatActivity() {
                 scope.launch {
                     withContext(Dispatchers.IO) {
                         model.loadLists(
-                            anime,
                             intent.getIntExtra("userId", 0),
                             sort
                         )

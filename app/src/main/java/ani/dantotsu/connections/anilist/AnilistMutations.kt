@@ -81,14 +81,9 @@ class AnilistMutations {
 
     suspend fun toggleFav(anime: Boolean = true, id: Int) {
         val query = """
-            mutation (${"$"}animeId: Int, ${"$"}mangaId: Int) {
-                ToggleFavourite(animeId: ${"$"}animeId, mangaId: ${"$"}mangaId) {
+            mutation (${"$"}animeId: Int) {
+                ToggleFavourite(animeId: ${"$"}animeId) {
                     anime {
-                        edges {
-                            id
-                        }
-                    }
-                    manga {
                         edges {
                             id
                         }
@@ -96,17 +91,17 @@ class AnilistMutations {
                 }
             }
         """.trimIndent()
-        val variables = if (anime) """{"animeId":"$id"}""" else """{"mangaId":"$id"}"""
+        val variables = """{"animeId":"$id"}"""
         executeQuery<JsonObject>(query, variables)
     }
 
     suspend fun toggleFav(type: FavType, id: Int): Boolean {
         val filter = when (type) {
             FavType.ANIME -> "animeId"
-            FavType.MANGA -> "mangaId"
             FavType.CHARACTER -> "characterId"
             FavType.STAFF -> "staffId"
             FavType.STUDIO -> "studioId"
+            else -> "animeId"
         }
         val query = """
             mutation {
@@ -124,7 +119,7 @@ class AnilistMutations {
     }
 
     enum class FavType {
-        ANIME, MANGA, CHARACTER, STAFF, STUDIO
+        ANIME, CHARACTER, STAFF, STUDIO
     }
 
     suspend fun deleteCustomList(name: String, type: String): Boolean {
@@ -146,17 +141,13 @@ class AnilistMutations {
     }
 
     suspend fun updateCustomLists(
-        animeCustomLists: List<String>?,
-        mangaCustomLists: List<String>?
+        animeCustomLists: List<String>?
     ): Boolean {
         val query = """
-            mutation (${"$"}animeListOptions: MediaListOptionsInput, ${"$"}mangaListOptions: MediaListOptionsInput) {
-                UpdateUser(animeListOptions: ${"$"}animeListOptions, mangaListOptions: ${"$"}mangaListOptions) {
+            mutation (${"$"}animeListOptions: MediaListOptionsInput) {
+                UpdateUser(animeListOptions: ${"$"}animeListOptions) {
                     mediaListOptions {
                         animeList {
-                            customLists
-                        }
-                        mangaList {
                             customLists
                         }
                     }
@@ -166,8 +157,6 @@ class AnilistMutations {
         val variables = """
             {
                 ${animeCustomLists?.let { """"animeListOptions": {"customLists": ${Gson().toJson(it)}}""" } ?: ""}
-                ${if (animeCustomLists != null && mangaCustomLists != null) "," else ""}
-                ${mangaCustomLists?.let { """"mangaListOptions": {"customLists": ${Gson().toJson(it)}}""" } ?: ""}
             }
         """.trimIndent().replace("\n", "").replace("""    """, "").replace(",}", "}")
 

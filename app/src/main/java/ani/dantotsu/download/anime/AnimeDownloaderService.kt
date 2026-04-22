@@ -44,8 +44,6 @@ import eu.kanade.tachiyomi.animesource.model.SAnimeImpl
 import eu.kanade.tachiyomi.animesource.model.SEpisode
 import eu.kanade.tachiyomi.animesource.model.SEpisodeImpl
 import eu.kanade.tachiyomi.data.notification.Notifications
-import eu.kanade.tachiyomi.source.model.SChapter
-import eu.kanade.tachiyomi.source.model.SChapterImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -438,9 +436,6 @@ class AnimeDownloaderService : Service() {
                     ?: throw Exception("Directory not found")
 
             val gson = GsonBuilder()
-                .registerTypeAdapter(SChapter::class.java, InstanceCreator<SChapter> {
-                    SChapterImpl() // Provide an instance of SChapterImpl
-                })
                 .registerTypeAdapter(SAnime::class.java, InstanceCreator<SAnime> {
                     SAnimeImpl() // Provide an instance of SAnimeImpl
                 })

@@ -33,16 +33,6 @@ object MalScraper {
                         if (!text.contains("Help improve our database"))
                             media.anime.ed.add(it.text())
                     }
-                } else {
-                    val res =
-                        client.get("https://myanimelist.net/manga/${media.idMAL}", headers).document
-                    val b = res.select(".title-english").text()
-                    val a = res.select(".h1-title").text().removeSuffix(b)
-                    media.nameMAL = a
-                    media.typeMAL =
-                        if (res.select("div.spaceit_pad > a")
-                                .isNotEmpty()
-                        ) res.select("div.spaceit_pad > a")[0].text() else null
                 }
             }
         } catch (e: Exception) {

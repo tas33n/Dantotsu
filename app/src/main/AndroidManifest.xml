@@ -107,34 +107,11 @@
         </receiver>
         <receiver android:name=".notifications.IncognitoNotificationClickReceiver" />
 
-        <activity
-            android:name=".media.novel.novelreader.NovelReaderActivity"
-            android:configChanges="orientation|screenSize"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="application/epub+zip"/>
-                <data android:mimeType="application/x-mobipocket-ebook" />
-                <data android:mimeType="application/vnd.amazon.ebook" />
-                <data android:mimeType="application/fb2+zip" />
-                <data android:mimeType="application/vnd.comicbook+zip" />
-                <data android:pathPattern=".*\\.epub" />
-                <data android:pathPattern=".*\\.mobi" />
-                <data android:pathPattern=".*\\.kf8" />
-                <data android:pathPattern=".*\\.fb2" />
-                <data android:pathPattern=".*\\.cbz" />
-                <data android:scheme="content" />
-                <data android:scheme="file" />
-            </intent-filter>
-        </activity>
         <activity android:name=".others.calc.CalcActivity"
             android:parentActivityName=".MainActivity" />
         <activity android:name=".settings.AnilistSettingsActivity"/>
         <activity android:name=".settings.UserInterfaceSettingsActivity" />
         <activity android:name=".settings.PlayerSettingsActivity" />
-        <activity android:name=".settings.ReaderSettingsActivity" />
         <activity android:name=".settings.FAQActivity" />
         <activity
             android:name=".settings.SettingsActivity"
@@ -160,9 +137,6 @@
             android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".settings.SettingsAddonActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".settings.SettingsMangaActivity"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".settings.SettingsNotificationActivity"
@@ -224,12 +198,6 @@
         <activity
             android:name=".profile.SingleStatActivity"
             android:parentActivityName=".profile.ProfileActivity" />
-        <activity
-            android:name=".media.manga.mangareader.MangaReaderActivity"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/manga"
-            android:launchMode="singleTask" />
         <activity android:name=".media.GenreActivity" />
         <activity
             android:name=".media.MediaListViewActivity"
@@ -329,18 +297,6 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:launchMode="singleTask">
-            <intent-filter android:label="@string/read_on_dantotsu">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-                <data android:host="anilist.co" />
-                <data android:host="myanimelist.net" />
-                <data android:pathPrefix="/manga" />
-            </intent-filter>
             <intent-filter android:label="@string/watch_on_dantotsu">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -396,7 +352,6 @@
                 <data android:host="add-repo"/>
                 <data android:scheme="tachiyomi"/>
                 <data android:scheme="aniyomi"/>
-                <data android:scheme="novelyomi"/>
             </intent-filter>
         </activity>
         <activity
@@ -443,14 +398,6 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
             android:name="eu.kanade.tachiyomi.extension.util.ExtensionInstallService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-        <service
-            android:name=".download.manga.MangaDownloaderService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-        <service
-            android:name=".download.novel.NovelDownloaderService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
         <service

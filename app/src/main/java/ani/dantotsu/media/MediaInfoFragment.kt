@@ -47,7 +47,6 @@ import ani.dantotsu.px
 import ani.dantotsu.setSafeOnClickListener
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
-import ani.dantotsu.media.mangaupdates.MangaAnimeUtil
 import ani.dantotsu.util.Logger
 import com.xwray.groupie.GroupieAdapter
 import io.noties.markwon.Markwon
@@ -84,47 +83,6 @@ class MediaInfoFragment : Fragment() {
         super.onDestroyView();_binding = null
     }
 
-    // Method to display anime adaptation
-    private fun displayAnimeAdaptation(adaptation: MangaAnimeUtil.AnimeAdaptation) {
-        if (adaptation.hasAdaptation) {
-            val adaptationText = buildString {
-                append("Start: ${adaptation.animeStart ?: "Unknown"}\n")
-                append("End: ${adaptation.animeEnd ?: "Ongoing"}")
-            }
-
-            binding.mediaAnimeAdaptation.text = adaptationText
-
-            binding.mediaAnimeAdaptationText.fadeIn()
-            binding.mediaAnimeAdaptation.fadeIn()
-        } else {
-            binding.mediaAnimeAdaptationText.fadeOut()
-            binding.mediaAnimeAdaptation.fadeOut()
-        }
-    }
-    private fun displayNextChapterPrediction(prediction: MangaAnimeUtil.NextRelease) {
-        if (prediction.error == null && prediction.nextReleaseDate != null) {
-            val dateFormat = java.text.SimpleDateFormat("d MMMM", java.util.Locale.US)
-
-            val predictionText = buildString {
-                append("Current: ${prediction.latestChapter ?: "Unknown"}\n")
-                append("${prediction.nextChapter ?: "Next chapter"} releases on ${
-                    dateFormat.format(prediction.nextReleaseDate)
-                }")
-            }
-
-            binding.mediaNextChapterPrediction.text = predictionText
-
-            binding.mediaNextChapterPredictionText.fadeIn()
-            binding.mediaNextChapterPrediction.fadeIn()
-        } else {
-            binding.mediaNextChapterPredictionText.fadeOut()
-            binding.mediaNextChapterPrediction.fadeOut()
-
-            if (prediction.error != null) {
-                Logger.log("Next chapter prediction error: ${prediction.error}")
-            }
-        }
-    }
     fun View.fadeIn(duration: Long = 250) {
         if (isVisible) return
         alpha = 0f
@@ -302,27 +260,6 @@ class MediaInfoFragment : Fragment() {
                     else
                         (media.anime.totalEpisodes ?: "~").toString()
                     binding.mediaInfoTotal.text = infoTotal
-
-                } else if (media.manga != null) {
-                    type = "MANGA"
-                    binding.mediaInfoTotalTitle.setText(R.string.total_chaps)
-                    binding.mediaInfoTotal.text = (media.manga.totalChapters ?: "~").toString()
-                    if (media.manga.author != null) {
-                        binding.mediaInfoAuthorContainer.visibility = View.VISIBLE
-                        binding.mediaInfoAuthor.text = media.manga.author!!.name
-                        if (!offline) {
-                            binding.mediaInfoAuthorContainer.setOnClickListener {
-                                ContextCompat.startActivity(
-                                    requireActivity(),
-                                    Intent(activity, AuthorActivity::class.java).putExtra(
-                                        "author",
-                                        media.manga.author!! as Serializable
-                                    ),
-                                    null
-                                )
-                            }
-                        }
-                    }
                 }
 
                 val desc = HtmlCompat.fromHtml(
@@ -346,17 +283,6 @@ class MediaInfoFragment : Fragment() {
                 val parent = _binding?.mediaInfoContainer!!
                 val screenWidth = resources.displayMetrics.run { widthPixels / density }
 
-                if (media.manga != null && !offline) {
-                    model.loadMangaExtras(media)
-
-                    model.adaptation.observe(viewLifecycleOwner) {
-                        it?.let { displayAnimeAdaptation(it) }
-                    }
-
-                    model.nextRelease.observe(viewLifecycleOwner) {
-                        it?.let { displayNextChapterPrediction(it) }
-                    }
-                }
                 if (media.synonyms.isNotEmpty()) {
                     val bind = ItemTitleChipgroupBinding.inflate(
                         LayoutInflater.from(context),
@@ -388,8 +314,7 @@ class MediaInfoFragment : Fragment() {
                                 status = media.userStatus,
                                 score = media.userScore.toFloat(),
                                 progress = media.userProgress,
-                                totalEpisodes = media.anime?.totalEpisodes
-                                    ?: media.manga?.totalChapters,
+                                totalEpisodes = media.anime?.totalEpisodes,
                                 nextAiringEpisode = media.anime?.nextAiringEpisode
                             )
                         )

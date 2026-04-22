@@ -69,16 +69,12 @@ class ExtensionsActivity : AppCompatActivity() {
         viewPager.offscreenPageLimit = 1
 
         viewPager.adapter = object : FragmentStateAdapter(this) {
-            override fun getItemCount(): Int = 6
+            override fun getItemCount(): Int = 2
 
             override fun createFragment(position: Int): Fragment {
                 return when (position) {
                     0 -> InstalledAnimeExtensionsFragment()
                     1 -> AnimeExtensionsFragment()
-                    2 -> InstalledMangaExtensionsFragment()
-                    3 -> MangaExtensionsFragment()
-                    4 -> InstalledNovelExtensionsFragment()
-                    5 -> NovelExtensionsFragment()
                     else -> AnimeExtensionsFragment()
                 }
             }
@@ -100,15 +96,7 @@ class ExtensionsActivity : AppCompatActivity() {
                         height = ViewGroup.LayoutParams.MATCH_PARENT
                     }
 
-                    if (tab.text?.contains("Anime") == true) {
-                        generateRepositoryButton(MediaType.ANIME)
-                    }
-                    if (tab.text?.contains("Manga") == true) {
-                        generateRepositoryButton(MediaType.MANGA)
-                    }
-                    if (tab.text?.contains("Novels") == true) {
-                        generateRepositoryButton(MediaType.NOVEL)
-                    }
+                    generateRepositoryButton(MediaType.ANIME)
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -131,10 +119,6 @@ class ExtensionsActivity : AppCompatActivity() {
             tab.text = when (position) {
                 0 -> "Installed Anime"
                 1 -> "Available Anime"
-                2 -> "Installed Manga"
-                3 -> "Available Manga"
-                4 -> "Installed Novels"
-                5 -> "Available Novels"
                 else -> null
             }
         }.attach()
@@ -190,19 +174,7 @@ class ExtensionsActivity : AppCompatActivity() {
 
     private fun generateRepositoryButton(type: MediaType) {
         binding.openSettingsButton.setOnClickListener {
-            val repos: Set<String> = when (type) {
-                MediaType.ANIME -> {
-                    PrefManager.getVal(PrefName.AnimeExtensionRepos)
-                }
-
-                MediaType.MANGA -> {
-                    PrefManager.getVal(PrefName.MangaExtensionRepos)
-                }
-
-                MediaType.NOVEL -> {
-                    PrefManager.getVal(PrefName.NovelExtensionRepos)
-                }
-            }
+            val repos: Set<String> = PrefManager.getVal(PrefName.AnimeExtensionRepos)
             AddRepositoryBottomSheet.newInstance(
                 type,
                 repos.toList(),

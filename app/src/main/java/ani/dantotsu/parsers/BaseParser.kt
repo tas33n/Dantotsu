@@ -8,7 +8,6 @@ import ani.dantotsu.media.Media
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.util.Logger
 import eu.kanade.tachiyomi.animesource.model.SAnime
-import eu.kanade.tachiyomi.source.model.SManga
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -56,25 +55,20 @@ abstract class BaseParser {
     open val iconUrl: String? = null
 
     /**
-     *  Search for Anime/Manga/Novel, returns a List of Responses
+     *  Search for Anime, returns a List of Responses
      *
      *  use `encode(query)` to encode the query for making requests
      * **/
     abstract suspend fun search(query: String): List<ShowResponse>
 
     /**
-     * The function app uses to auto find the anime/manga using Media data provided by anilist
+     * The function app uses to auto find the anime using Media data provided by anilist
      *
      * Isn't necessary to override, but recommended, if you want to improve auto search results
      * **/
     open suspend fun autoSearch(mediaObj: Media): ShowResponse? {
-        (this as? DynamicMangaParser)?.let { ext ->
-            mediaObj.selected?.langIndex?.let {
-                ext.sourceLanguage = it
-            }
-        }
         var response: ShowResponse? = loadSavedShowResponse(mediaObj.id)
-        if (response != null && this !is OfflineMangaParser && this !is OfflineAnimeParser) {
+        if (response != null && this !is OfflineAnimeParser) {
             saveShowResponse(mediaObj.id, response, true)
         } else {
             setUserText("Searching : ${mediaObj.mainName()}")
@@ -230,12 +224,12 @@ abstract class BaseParser {
     fun encode(input: String): String = URLEncoder.encode(input, "utf-8").replace("+", "%20")
     fun decode(input: String): String = URLDecoder.decode(input, "utf-8")
 
-    val defaultImage = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/medium/default.jpg"
+    val defaultImage = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/default.jpg"
 }
 
 
 /**
- * A single show which contains some episodes/chapters which is sent by the site using their search function.
+ * A single show which contains some episodes which is sent by the site using their search function.
  *
  * You might wanna include `otherNames` & `total` too, to further improve user experience.
  *
@@ -249,17 +243,14 @@ data class ShowResponse(
     //would be Useful for custom search, ig
     val otherNames: List<String> = listOf(),
 
-    //Total number of Episodes/Chapters in the show.
+    //Total number of Episodes in the show.
     val total: Int? = null,
 
     //In case you want to sent some extra data
     val extra: MutableMap<String, String>? = null,
 
     //SAnime object from Aniyomi
-    val sAnime: SAnime? = null,
-
-    //SManga object from Aniyomi
-    val sManga: SManga? = null
+    val sAnime: SAnime? = null
 ) : Serializable {
     constructor(
         name: String,
@@ -286,9 +277,6 @@ data class ShowResponse(
 
     constructor(name: String, link: String, coverUrl: String, sAnime: SAnime)
             : this(name, link, FileUrl(coverUrl), sAnime = sAnime)
-
-    constructor(name: String, link: String, coverUrl: String, sManga: SManga)
-            : this(name, link, FileUrl(coverUrl), sManga = sManga)
 
     companion object {
         private const val serialVersionUID = 1L

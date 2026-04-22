@@ -66,13 +66,8 @@ class StatsFragment :
             topMargin = statusBarHeight
         }
 
-        binding.sourceType.setAdapter(
-            ArrayAdapter(
-                requireContext(),
-                R.layout.item_dropdown,
-                MediaType.entries.map { it.name.uppercase(Locale.ROOT).replace("_", " ") }
-            )
-        )
+        binding.sourceType.visibility = View.GONE // Remove MediaType selection
+        
         binding.sourceFilter.setAdapter(
             ArrayAdapter(
                 requireContext(),
@@ -94,7 +89,7 @@ class StatsFragment :
                         if (userStats != null) {
                             stats.add(userStats)
                             withContext(Dispatchers.Main) {
-                                loadStats(type == MediaType.ANIME)
+                                loadStats()
                                 binding.statisticProgressBar.visibility = View.GONE
                                 binding.statisticList.visibility = View.VISIBLE
                             }
@@ -105,7 +100,7 @@ class StatsFragment :
                 stats.removeAll(
                     stats.filter { it?.id == Anilist.userid }.toSet()
                 )
-                loadStats(type == MediaType.ANIME)
+                loadStats()
             }
         }
 
@@ -129,65 +124,50 @@ class StatsFragment :
                     stats.add(Anilist.query.getUserStatistics(user.id)?.data?.user)
                     withContext(Dispatchers.Main) {
                         binding.filterContainer.visibility = View.VISIBLE
-                        binding.sourceType.setOnItemClickListener { _, _, i, _ ->
-                            type = MediaType.entries.toTypedArray()[i]
-                            loadStats(type == MediaType.ANIME)
-                        }
                         binding.sourceFilter.setOnItemClickListener { _, _, i, _ ->
                             statType = StatType.entries.toTypedArray()[i]
-                            loadStats(type == MediaType.ANIME)
+                            loadStats()
                         }
-                        loadStats(type == MediaType.ANIME)
+                        loadStats()
                         binding.statisticProgressBar.visibility = View.GONE
                     }
                 }
                 loadedFirstTime = true
             }
         }
-        loadStats(type == MediaType.ANIME)
+        loadStats()
     }
 
-    private fun loadStats(anime: Boolean) {
+    private fun loadStats() {
         binding.statisticProgressBar.visibility = View.VISIBLE
         binding.statisticList.visibility = View.GONE
         adapter.clear()
-        loadFormatChart(anime)
-        loadScoreChart(anime)
-        loadStatusChart(anime)
-        loadReleaseYearChart(anime)
-        loadStartYearChart(anime)
-        loadLengthChart(anime)
-        loadGenreChart(anime)
-        loadTagChart(anime)
-        loadCountryChart(anime)
-        loadVoiceActorsChart(anime)
-        loadStudioChart(anime)
-        loadStaffChart(anime)
+        loadFormatChart()
+        loadScoreChart()
+        loadStatusChart()
+        loadReleaseYearChart()
+        loadStartYearChart()
+        loadLengthChart()
+        loadGenreChart()
+        loadTagChart()
+        loadCountryChart()
+        loadVoiceActorsChart()
+        loadStudioChart()
+        loadStaffChart()
         binding.statisticProgressBar.visibility = View.GONE
         binding.statisticList.visibility = View.VISIBLE
     }
 
-    private fun loadFormatChart(anime: Boolean) {
+    private fun loadFormatChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.formats?.map { it.format } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.formats?.map { it.format } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.formats?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.formats?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.formats?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.formats?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.formats?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.formats?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.formats?.map { it.format } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.formats?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.formats?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.formats?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() && values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -206,27 +186,16 @@ class StatsFragment :
         }
     }
 
-    private fun loadStatusChart(anime: Boolean) {
+    private fun loadStatusChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.statuses?.map { it.status } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.statuses?.map { it.status } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.statuses?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.statuses?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.statuses?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.statuses?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.statuses?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.statuses?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.statuses?.map { it.status } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.statuses?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.statuses?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.statuses?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() && values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -245,37 +214,21 @@ class StatsFragment :
         }
     }
 
-    private fun loadScoreChart(anime: Boolean) {
+    private fun loadScoreChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<Int> = if (anime) {
-                stat?.statistics?.anime?.scores?.map {
-                    convertScore(
-                        it.score,
-                        stat.mediaListOptions.scoreFormat.toString()
-                    )
-                } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.scores?.map {
-                    convertScore(
-                        it.score,
-                        stat.mediaListOptions.scoreFormat.toString()
-                    )
-                } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.scores?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.scores?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.scores?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.scores?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.scores?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.scores?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<Int> = stat?.statistics?.anime?.scores?.map {
+                convertScore(
+                    it.score,
+                    stat.mediaListOptions.scoreFormat.toString()
+                )
+            } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.scores?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.scores?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.scores?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -294,29 +247,17 @@ class StatsFragment :
         }
     }
 
-    private fun loadLengthChart(anime: Boolean) {
+    private fun loadLengthChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.lengths?.map { it.length ?: "unknown" }
-                    ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.lengths?.map { it.length ?: "unknown" }
-                    ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.lengths?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.lengths?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.lengths?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.lengths?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.lengths?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.lengths?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.lengths?.map { it.length ?: "unknown" }
+                ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.lengths?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.lengths?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.lengths?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -335,29 +276,17 @@ class StatsFragment :
         }
     }
 
-    private fun loadReleaseYearChart(anime: Boolean) {
+    private fun loadReleaseYearChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<Number> = if (anime) {
-                stat?.statistics?.anime?.releaseYears?.map { it.releaseYear }
-                    ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.releaseYears?.map { it.releaseYear }
-                    ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.releaseYears?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.releaseYears?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.releaseYears?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.releaseYears?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.releaseYears?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.releaseYears?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<Number> = stat?.statistics?.anime?.releaseYears?.map { it.releaseYear }
+                ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.releaseYears?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.releaseYears?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.releaseYears?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -377,27 +306,16 @@ class StatsFragment :
         }
     }
 
-    private fun loadStartYearChart(anime: Boolean) {
+    private fun loadStartYearChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<Number> = if (anime) {
-                stat?.statistics?.anime?.startYears?.map { it.startYear } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.startYears?.map { it.startYear } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.startYears?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.startYears?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.startYears?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.startYears?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.startYears?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.startYears?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<Number> = stat?.statistics?.anime?.startYears?.map { it.startYear } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.startYears?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.startYears?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.startYears?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -416,27 +334,16 @@ class StatsFragment :
         }
     }
 
-    private fun loadGenreChart(anime: Boolean) {
+    private fun loadGenreChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.genres?.map { it.genre } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.genres?.map { it.genre } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.genres?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.genres?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.genres?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.genres?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.genres?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.genres?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.genres?.map { it.genre } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.genres?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.genres?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.genres?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -471,27 +378,16 @@ class StatsFragment :
         }
     }
 
-    private fun loadTagChart(anime: Boolean) {
+    private fun loadTagChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.tags?.map { it.tag.name } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.tags?.map { it.tag.name } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.tags?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.tags?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.tags?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.tags?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.tags?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.tags?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.tags?.map { it.tag.name } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.tags?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.tags?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.tags?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -526,27 +422,16 @@ class StatsFragment :
         }
     }
 
-    private fun loadCountryChart(anime: Boolean) {
+    private fun loadCountryChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.countries?.map { it.country } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.countries?.map { it.country } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.countries?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.countries?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.countries?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.countries?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.countries?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.countries?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.countries?.map { it.country } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.countries?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.countries?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.countries?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -581,29 +466,17 @@ class StatsFragment :
         }
     }
 
-    private fun loadVoiceActorsChart(anime: Boolean) {
+    private fun loadVoiceActorsChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.voiceActors?.map { it.voiceActor.name.full ?: "unknown" }
-                    ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.voiceActors?.map { it.voiceActor.name.full ?: "unknown" }
-                    ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.voiceActors?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.voiceActors?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.voiceActors?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.voiceActors?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.voiceActors?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.voiceActors?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.voiceActors?.map { it.voiceActor.name.full ?: "unknown" }
+                ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.voiceActors?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.voiceActors?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.voiceActors?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -638,27 +511,16 @@ class StatsFragment :
         }
     }
 
-    private fun loadStudioChart(anime: Boolean) {
+    private fun loadStudioChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.studios?.map { it.studio.name } ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.studios?.map { it.studio.name } ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.studios?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.studios?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.studios?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.studios?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.studios?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.studios?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.studios?.map { it.studio.name } ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.studios?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.studios?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.studios?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }
@@ -694,29 +556,17 @@ class StatsFragment :
         }
     }
 
-    private fun loadStaffChart(anime: Boolean) {
+    private fun loadStaffChart() {
         val chartPackets = mutableListOf<ChartPacket>()
         stats.forEach { stat ->
-            val names: List<String> = if (anime) {
-                stat?.statistics?.anime?.staff?.map { it.staff.name.full ?: "unknown" }
-                    ?: emptyList()
-            } else {
-                stat?.statistics?.manga?.staff?.map { it.staff.name.full ?: "unknown" }
-                    ?: emptyList()
-            }
-            val values: List<Number> = if (anime) {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.anime?.staff?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.anime?.staff?.map { it.minutesWatched / 60 }
-                    StatType.AVG_SCORE -> stat?.statistics?.anime?.staff?.map { it.meanScore }
-                } ?: emptyList()
-            } else {
-                when (statType) {
-                    StatType.COUNT -> stat?.statistics?.manga?.staff?.map { it.count }
-                    StatType.TIME -> stat?.statistics?.manga?.staff?.map { it.chaptersRead }
-                    StatType.AVG_SCORE -> stat?.statistics?.manga?.staff?.map { it.meanScore }
-                } ?: emptyList()
-            }
+            val names: List<String> = stat?.statistics?.anime?.staff?.map { it.staff.name.full ?: "unknown" }
+                ?: emptyList()
+            val values: List<Number> = when (statType) {
+                StatType.COUNT -> stat?.statistics?.anime?.staff?.map { it.count }
+                StatType.TIME -> stat?.statistics?.anime?.staff?.map { it.minutesWatched / 60 }
+                StatType.AVG_SCORE -> stat?.statistics?.anime?.staff?.map { it.meanScore }
+            } ?: emptyList()
+            
             if (names.isNotEmpty() || values.isNotEmpty()) {
                 chartPackets.add(ChartPacket(stat?.name ?: "Unknown", names, values))
             }

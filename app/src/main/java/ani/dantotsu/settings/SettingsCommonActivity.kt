@@ -407,7 +407,6 @@ class SettingsCommonActivity : AppCompatActivity() {
                 when (PrefManager.getVal<Int>(PrefName.DefaultStartUpTab)) {
                     0 -> uiSettingsAnime
                     1 -> uiSettingsHome
-                    2 -> uiSettingsManga
                     else -> uiSettingsHome
                 }
             previousStart.alpha = 1f
@@ -429,10 +428,6 @@ class SettingsCommonActivity : AppCompatActivity() {
 
             uiSettingsHome.setOnClickListener {
                 uiDefault(1, it)
-            }
-
-            uiSettingsManga.setOnClickListener {
-                uiDefault(2, it)
             }
         }
     }

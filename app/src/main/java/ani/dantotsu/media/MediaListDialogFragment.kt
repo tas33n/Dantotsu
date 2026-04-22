@@ -56,10 +56,7 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                 binding.mediaListLayout.visibility = View.VISIBLE
 
                 val statuses: Array<String> = resources.getStringArray(R.array.status)
-                val statusStrings =
-                    if (media?.manga == null) resources.getStringArray(R.array.status_anime) else resources.getStringArray(
-                        R.array.status_manga
-                    )
+                val statusStrings = resources.getStringArray(R.array.status_anime)
                 val userStatus =
                     if (media!!.userStatus != null) statusStrings[statuses.indexOf(media!!.userStatus)] else statusStrings[0]
 
@@ -77,13 +74,6 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                 binding.mediaListProgress.setText(if (media!!.userProgress != null) media!!.userProgress.toString() else "")
                 if (media!!.anime != null) if (media!!.anime!!.totalEpisodes != null) {
                     total = media!!.anime!!.totalEpisodes!!;
-                    binding.mediaListProgress.filters =
-                        arrayOf(
-                            InputFilterMinMax(0.0, total.toDouble(), binding.mediaListStatus),
-                            LengthFilter(total.toString().length)
-                        )
-                } else if (media!!.manga != null) if (media!!.manga!!.totalChapters != null) {
-                    total = media!!.manga!!.totalChapters!!;
                     binding.mediaListProgress.filters =
                         arrayOf(
                             InputFilterMinMax(0.0, total.toDouble(), binding.mediaListStatus),
@@ -251,7 +241,7 @@ class MediaListDialogFragment : BottomSheetDialogFragment() {
                                 )
                                 MAL.query.editList(
                                     media!!.idMAL,
-                                    media!!.anime != null,
+                                    true,
                                     progress,
                                     score,
                                     status,

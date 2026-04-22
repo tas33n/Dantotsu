@@ -37,7 +37,6 @@ class ActivityFilterBottomSheet : BottomSheetDialogFragment() {
             currentFilter = when (id) {
                 R.id.filterAll -> ActivityFilterType.ALL
                 R.id.filterAnimeProgress -> ActivityFilterType.ANIME_PROGRESS
-                R.id.filterMangaProgress -> ActivityFilterType.MANGA_PROGRESS
                 R.id.filterStatus -> ActivityFilterType.STATUS
                 R.id.filterMessages -> ActivityFilterType.MESSAGES
                 R.id.filterText -> ActivityFilterType.TEXT
@@ -55,7 +54,6 @@ class ActivityFilterBottomSheet : BottomSheetDialogFragment() {
         return when (filter) {
             ActivityFilterType.ALL -> R.id.filterAll
             ActivityFilterType.ANIME_PROGRESS -> R.id.filterAnimeProgress
-            ActivityFilterType.MANGA_PROGRESS -> R.id.filterMangaProgress
             ActivityFilterType.STATUS -> R.id.filterStatus
             ActivityFilterType.MESSAGES -> R.id.filterMessages
             ActivityFilterType.TEXT -> R.id.filterText
@@ -83,7 +81,6 @@ class ActivityFilterBottomSheet : BottomSheetDialogFragment() {
 enum class ActivityFilterType {
     ALL,
     ANIME_PROGRESS,
-    MANGA_PROGRESS,
     STATUS,
     MESSAGES,
     TEXT

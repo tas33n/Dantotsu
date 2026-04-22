@@ -1,6 +1,6 @@
 package tachiyomi.domain.entries.anime.model
 
-import eu.kanade.tachiyomi.source.model.UpdateStrategy
+import eu.kanade.tachiyomi.animesource.model.AnimeUpdateStrategy
 import tachiyomi.domain.entries.TriStateFilter
 import java.io.Serializable
 import kotlin.math.pow
@@ -24,7 +24,7 @@ data class Anime(
     val genre: List<String>?,
     val status: Long,
     val thumbnailUrl: String?,
-    val updateStrategy: UpdateStrategy,
+    val updateStrategy: AnimeUpdateStrategy,
     val initialized: Boolean,
 ) : Serializable {
 
@@ -127,7 +127,7 @@ data class Anime(
             genre = null,
             status = 0L,
             thumbnailUrl = null,
-            updateStrategy = UpdateStrategy.ALWAYS_UPDATE,
+            updateStrategy = AnimeUpdateStrategy.ALWAYS_UPDATE,
             initialized = false,
         )
     }

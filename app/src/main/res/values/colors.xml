@@ -298,7 +298,7 @@
     </color>                                <!-- if there are any issues with Saikou theme message @Wai What to get it fixed, unallocated colors are also set to "#00FF00" as they are not yet being used-->
     <color name="md_theme_light_5_primary">#FF007F</color>
     <color name="md_theme_light_5_onPrimary">#EEEEEE
-    </color>            <!-- good but shared with anime and manga list headers -->
+    </color>            <!-- good but shared with anime list headers -->
     <color name="md_theme_light_5_primaryContainer">#000000
     </color>     <!-- good-ish, it's shared with slider colors so I've had to set it to "#000000" instead of "#78757C" -->
     <color name="md_theme_light_5_onPrimaryContainer">#FF007F
@@ -332,7 +332,7 @@
     <color name="md_theme_light_5_scrim">#00FF00</color>
     <color name="md_theme_dark_5_primary">#FF5DAE</color>
     <color name="md_theme_dark_5_onPrimary">#EEEEEE
-    </color>             <!-- good but shared with anime and manga list headers -->
+    </color>             <!-- good but shared with anime list headers -->
     <color name="md_theme_dark_5_primaryContainer">#EEEEEE
     </color>      <!-- good-ish, it's shared with slider colors so I've had to set it to "#EEEEEE" instead of "#928F98" -->
     <color name="md_theme_dark_5_onPrimaryContainer">#FF5DAE
@@ -612,7 +612,7 @@
     <color name="md_theme_dark_9_inverseOnSurface">#201A19</color>
     <color name="md_theme_dark_9_inverseSurface">#EDE0DE</color>
     <color name="md_theme_dark_9_inversePrimary">#C0000A</color>
-    <color name="md_theme_dark_9_shadow">#000000</color>
+    <color name="md_theme_dark_9_shadow_flash">#000000</color>
     <color name="md_theme_dark_9_surfaceTint">#FFB4AA</color>
     <color name="md_theme_dark_9_outlineVariant">#534341</color>
     <color name="md_theme_dark_9_scrim">#000000</color>

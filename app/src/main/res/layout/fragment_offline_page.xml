@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.MangaFragment">
+    tools:context=".download.anime.OfflineAnimeFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/offlineMangaSearchBar"
+                    android:id="@+id/offlineAnimeSearchBar"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
@@ -61,7 +61,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/offlineMangaAvatarContainer"
+                    android:id="@+id/offlineAnimeAvatarContainer"
                     android:layout_width="52dp"
                     android:layout_height="match_parent"
                     android:layout_marginTop="4dp"
@@ -70,7 +70,7 @@
                     app:strokeColor="@color/text_input_layout_stroke_color">
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/offlineMangaUserAvatar"
+                        android:id="@+id/offlineAnimeUserAvatar"
                         android:layout_width="52dp"
                         android:layout_height="52dp"
                         android:scaleType="center"
@@ -126,11 +126,11 @@
             </LinearLayout>
             <!-- This TextView might overlap with GridView if GridView has items -->
             <TextView
-                android:id="@+id/noMangaOffline"
+                android:id="@+id/noAnimeOffline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/no_offline_manga_found"
+                android:text="@string/nothing_here"
                 android:textColor="?attr/colorOnSurface"
                 android:textSize="18sp"
                 android:visibility="gone" />
@@ -167,7 +167,7 @@
     </FrameLayout>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/mangaPageScrollTop"
+        android:id="@+id/animePageScrollTop"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="bottom|center_horizontal"

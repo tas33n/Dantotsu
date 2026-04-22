@@ -62,8 +62,7 @@ class CommentsFragment : Fragment() {
     var pagesLoaded = 1
     var totalPages = 1
     private var userProgress: Int? = null
-    private var totalEpisodesOrChapters: Int? = null
-    private var isAnime: Boolean = true
+    private var totalEpisodes: Int? = null
     private var commentsLoaded = false
     private var isAutoFilterOn = false
     private var isSpoilerMode = false
@@ -138,12 +137,8 @@ class CommentsFragment : Fragment() {
         val model: MediaDetailsViewModel by activityViewModels()
         model.getMedia().observe(viewLifecycleOwner) { newMedia ->
             if (newMedia != null && newMedia.id != 0) {
-                isAnime = newMedia.anime != null
                 userProgress = newMedia.userProgress
-                totalEpisodesOrChapters = if (isAnime)
-                    newMedia.anime?.totalEpisodes
-                else
-                    newMedia.manga?.totalChapters
+                totalEpisodes = newMedia.anime?.totalEpisodes
                 updateCurrentProgressButton()
 
                 if (!commentsLoaded || newMedia.id != this.mediaId) {
@@ -235,7 +230,7 @@ class CommentsFragment : Fragment() {
         binding.commentFilter.setOnClickListener {
             activity.customAlertDialog().apply {
                 val customView = DialogEdittextBinding.inflate(layoutInflater)
-                setTitle("Enter a chapter/episode number tag")
+                setTitle("Enter an episode number tag")
                 setCustomView(customView.root)
                 setPosButton("OK") {
                     val text = customView.dialogEditText.text.toString()
@@ -275,14 +270,14 @@ class CommentsFragment : Fragment() {
         binding.commentCurrentProgress.setOnLongClickListener {
             val progress = userProgress ?: return@setOnLongClickListener false
             if (progress <= 0) return@setOnLongClickListener false
-            val total = totalEpisodesOrChapters ?: progress
+            val total = totalEpisodes ?: progress
             val maxEp = maxOf(total, progress)
-            val label = if (isAnime) "Ep" else "Ch"
+            val label = "Ep"
 
             val items = Array(maxEp) { i -> "$label ${i + 1}" }
             val currentSelection = if (filterTag != null) filterTag!! - 1 else progress - 1
             activity.customAlertDialog().apply {
-                setTitle("Filter by ${if (isAnime) "Episode" else "Chapter"}")
+                setTitle("Filter by Episode")
                 singleChoiceItems(items, currentSelection) { selected ->
                     filterTag = selected + 1
                     isAutoFilterOn = true
@@ -410,7 +405,7 @@ class CommentsFragment : Fragment() {
                 //alert dialog to enter a number, with a cancel and ok button
                 activity.customAlertDialog().apply {
                     val customView = DialogEdittextBinding.inflate(layoutInflater)
-                    setTitle("Enter a chapter/episode number tag")
+                    setTitle("Enter an episode number tag")
                     setCustomView(customView.root)
                     setPosButton("OK") {
                         val text = customView.dialogEditText.text.toString()
@@ -518,7 +513,7 @@ class CommentsFragment : Fragment() {
             binding.commentCurrentProgress.visibility = View.GONE
             return
         }
-        val label = if (isAnime) "Ep" else "Ch"
+        val label = "Ep"
         val isManualFilter = filterTag != null && filterTag != progress
         val activeFilter = filterTag ?: progress
 
@@ -592,8 +587,8 @@ class CommentsFragment : Fragment() {
             return
         }
 
-        val label = if (isAnime) "episode" else "chapter"
-        val total = totalEpisodesOrChapters
+        val label = "episode"
+        val total = totalEpisodes
         val defaultProgress = userProgress ?: 0
 
         activity.customAlertDialog().apply {

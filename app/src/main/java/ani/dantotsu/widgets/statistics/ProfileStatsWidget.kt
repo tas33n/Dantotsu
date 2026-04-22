@@ -97,24 +97,19 @@ class ProfileStatsWidget : AppWidgetProvider() {
                                 .putString("avatar_url", user.avatar?.medium ?: "")
                                 .putInt("anime_count", user.statistics.anime.count)
                                 .putInt("episodes_watched", user.statistics.anime.episodesWatched)
-                                .putInt("manga_count", user.statistics.manga.count)
-                                .putInt("chapters_read", user.statistics.manga.chaptersRead)
                                 .apply()
                             
                             renderWidget(context, appWidgetManager, appWidgetId, backgroundBitmap, userPref, titleTextColor, statsTextColor,
-                                user.name, user.avatar?.medium, user.statistics.anime.count, user.statistics.anime.episodesWatched,
-                                user.statistics.manga.count, user.statistics.manga.chaptersRead)
+                                user.name, user.avatar?.medium, user.statistics.anime.count, user.statistics.anime.episodesWatched)
                         } ?: showLoginCascade(context, appWidgetManager, appWidgetId, backgroundBitmap)
                     } else {
                         val userName = prefs.getString("user_name", "") ?: ""
                         val avatarUrl = prefs.getString("avatar_url", "")
                         val animeCount = prefs.getInt("anime_count", 0)
                         val episodesWatched = prefs.getInt("episodes_watched", 0)
-                        val mangaCount = prefs.getInt("manga_count", 0)
-                        val chaptersRead = prefs.getInt("chapters_read", 0)
                         
                         renderWidget(context, appWidgetManager, appWidgetId, backgroundBitmap, userPref, titleTextColor, statsTextColor,
-                            userName, avatarUrl, animeCount, episodesWatched, mangaCount, chaptersRead)
+                            userName, avatarUrl, animeCount, episodesWatched)
                     }
                 } else showLoginCascade(context, appWidgetManager, appWidgetId, backgroundBitmap)
             }
@@ -125,8 +120,7 @@ class ProfileStatsWidget : AppWidgetProvider() {
             backgroundBitmap: android.graphics.Bitmap, userPref: String,
             titleTextColor: Int, statsTextColor: Int,
             userName: String, avatarUrl: String?,
-            animeCount: Int, episodesWatched: Int,
-            mangaCount: Int, chaptersRead: Int
+            animeCount: Int, episodesWatched: Int
         ) {
             withContext(Dispatchers.Main) {
                 fun buildViews(): RemoteViews =
@@ -150,10 +144,6 @@ class ProfileStatsWidget : AppWidgetProvider() {
                         setTextColor(R.id.topLeftLabel, statsTextColor)
                         setTextColor(R.id.topRightItem, titleTextColor)
                         setTextColor(R.id.topRightLabel, statsTextColor)
-                        setTextColor(R.id.bottomLeftItem, titleTextColor)
-                        setTextColor(R.id.bottomLeftLabel, statsTextColor)
-                        setTextColor(R.id.bottomRightItem, titleTextColor)
-                        setTextColor(R.id.bottomRightLabel, statsTextColor)
                         
                         avatarUrl?.takeIf { it.isNotEmpty() }?.let { url ->
                             val avatarBitmap = downloadImageAsBitmap(url)
@@ -165,10 +155,6 @@ class ProfileStatsWidget : AppWidgetProvider() {
                         setTextViewText(R.id.topLeftLabel, context.getString(R.string.anime_watched))
                         setTextViewText(R.id.topRightItem, episodesWatched.toString())
                         setTextViewText(R.id.topRightLabel, context.getString(R.string.episodes_watched_n))
-                        setTextViewText(R.id.bottomLeftItem, mangaCount.toString())
-                        setTextViewText(R.id.bottomLeftLabel, context.getString(R.string.manga_read))
-                        setTextViewText(R.id.bottomRightItem, chaptersRead.toString())
-                        setTextViewText(R.id.bottomRightLabel, context.getString(R.string.chapters_read_n))
                         
                         val intent = Intent(context, ProfileActivity::class.java)
                             .putExtra("userId", userPref.toInt())
@@ -206,10 +192,6 @@ class ProfileStatsWidget : AppWidgetProvider() {
                     setTextViewText(R.id.topLeftLabel, context.getString(R.string.please))
                     setTextViewText(R.id.topRightItem, "")
                     setTextViewText(R.id.topRightLabel, context.getString(R.string.log_in))
-                    setTextViewText(R.id.bottomLeftItem, context.getString(R.string.or_join))
-                    setTextViewText(R.id.bottomLeftLabel, "")
-                    setTextViewText(R.id.bottomRightItem, context.getString(R.string.anilist))
-                    setTextViewText(R.id.bottomRightLabel, "")
                     val intent = Intent(context, MainActivity::class.java)
                     val pendingIntent = PendingIntent.getActivity(
                         context, 0, intent, PendingIntent.FLAG_IMMUTABLE

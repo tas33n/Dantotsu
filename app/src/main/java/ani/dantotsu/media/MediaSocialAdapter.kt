@@ -44,9 +44,7 @@ class MediaSocialAdapter(
             profileUserName.text = user.name
             profileInfo.apply {
                 text = when (user.status) {
-                    "CURRENT" -> if (type == "ANIME") getAppString(R.string.watching) else getAppString(
-                        R.string.reading
-                    )
+                    "CURRENT" -> getAppString(R.string.watching)
 
                     else -> user.status ?: ""
                 }

@@ -38,7 +38,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
     HeaderInterface() {
 
     private fun updateFilterTextViewDrawable() {
-        val filterDrawable = when (activity.aniMangaResult.sort) {
+        val filterDrawable = when (activity.animeResult.sort) {
             Anilist.sortBy[0] -> R.drawable.ic_round_area_chart_24
             Anilist.sortBy[1] -> R.drawable.ic_round_filter_peak_24
             Anilist.sortBy[2] -> R.drawable.ic_round_star_graph_24
@@ -65,7 +65,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
         val imm: InputMethodManager =
             activity.getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        if (activity.searchType != SearchType.MANGA && activity.searchType != SearchType.ANIME) {
+        if (activity.searchType != SearchType.ANIME) {
             throw IllegalArgumentException("Invalid search type (wrong adapter)")
         }
 
@@ -81,7 +81,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
             }
         }
 
-        binding.searchBar.hint = activity.aniMangaResult.type
+        binding.searchBar.hint = activity.animeResult.type
         if (PrefManager.getVal(PrefName.Incognito)) {
             val startIconDrawableRes = R.drawable.ic_incognito_24
             val startIconDrawable: Drawable? =
@@ -89,11 +89,11 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
             binding.searchBar.startIconDrawable = startIconDrawable
         }
 
-        var adult = activity.aniMangaResult.isAdult
-        var listOnly = activity.aniMangaResult.onList
+        var adult = activity.animeResult.isAdult
+        var listOnly = activity.animeResult.onList
 
         binding.searchBarText.removeTextChangedListener(textWatcher)
-        binding.searchBarText.setText(activity.aniMangaResult.search)
+        binding.searchBarText.setText(activity.animeResult.search)
 
         binding.searchAdultCheck.isChecked = adult
         binding.searchList.isChecked = listOnly == true
@@ -114,49 +114,49 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.sort_by_score -> {
-                        activity.aniMangaResult.sort = Anilist.sortBy[0]
+                        activity.animeResult.sort = Anilist.sortBy[0]
                         activity.updateChips.invoke()
                         activity.search()
                         updateFilterTextViewDrawable()
                     }
 
                     R.id.sort_by_popular -> {
-                        activity.aniMangaResult.sort = Anilist.sortBy[1]
+                        activity.animeResult.sort = Anilist.sortBy[1]
                         activity.updateChips.invoke()
                         activity.search()
                         updateFilterTextViewDrawable()
                     }
 
                     R.id.sort_by_trending -> {
-                        activity.aniMangaResult.sort = Anilist.sortBy[2]
+                        activity.animeResult.sort = Anilist.sortBy[2]
                         activity.updateChips.invoke()
                         activity.search()
                         updateFilterTextViewDrawable()
                     }
 
                     R.id.sort_by_recent -> {
-                        activity.aniMangaResult.sort = Anilist.sortBy[3]
+                        activity.animeResult.sort = Anilist.sortBy[3]
                         activity.updateChips.invoke()
                         activity.search()
                         updateFilterTextViewDrawable()
                     }
 
                     R.id.sort_by_a_z -> {
-                        activity.aniMangaResult.sort = Anilist.sortBy[4]
+                        activity.animeResult.sort = Anilist.sortBy[4]
                         activity.updateChips.invoke()
                         activity.search()
                         updateFilterTextViewDrawable()
                     }
 
                     R.id.sort_by_z_a -> {
-                        activity.aniMangaResult.sort = Anilist.sortBy[5]
+                        activity.animeResult.sort = Anilist.sortBy[5]
                         activity.updateChips.invoke()
                         activity.search()
                         updateFilterTextViewDrawable()
                     }
 
                     R.id.sort_by_pure_pain -> {
-                        activity.aniMangaResult.sort = Anilist.sortBy[6]
+                        activity.animeResult.sort = Anilist.sortBy[6]
                         activity.updateChips.invoke()
                         activity.search()
                         updateFilterTextViewDrawable()
@@ -166,9 +166,6 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
             }
             popupMenu.show()
             true
-        }
-        if (activity.aniMangaResult.type != "ANIME") {
-            binding.searchByImage.visibility = View.GONE
         }
         binding.searchByImage.setOnClickListener {
             activity.startActivity(Intent(activity, ImageSearchActivity::class.java))
@@ -180,7 +177,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
         }
         updateClearHistoryVisibility()
         fun searchTitle() {
-            activity.aniMangaResult.apply {
+            activity.animeResult.apply {
                 search =
                     if (binding.searchBarText.text.toString() != "") binding.searchBarText.text.toString() else null
                 onList = listOnly
@@ -287,7 +284,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
         private val searchAdapter: SearchAdapter
     ) :
         RecyclerView.Adapter<SearchChipAdapter.SearchChipViewHolder>() {
-        private var chips = activity.aniMangaResult.toChipList()
+        private var chips = activity.animeResult.toChipList()
 
         inner class SearchChipViewHolder(val binding: ItemChipBinding) :
             RecyclerView.ViewHolder(binding.root)
@@ -304,7 +301,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
             holder.binding.root.apply {
                 text = chip.text.replace("_", " ")
                 setOnClickListener {
-                    activity.aniMangaResult.removeChip(chip)
+                    activity.animeResult.removeChip(chip)
                     update()
                     activity.search()
                     searchAdapter.updateFilterTextViewDrawable()
@@ -314,7 +311,7 @@ class SearchAdapter(private val activity: SearchActivity, private val type: Sear
 
         @SuppressLint("NotifyDataSetChanged")
         fun update() {
-            chips = activity.aniMangaResult.toChipList()
+            chips = activity.animeResult.toChipList()
             notifyDataSetChanged()
             searchAdapter.updateFilterTextViewDrawable()
         }

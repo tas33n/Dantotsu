@@ -8,11 +8,9 @@ object AnilistLinkParser {
         val endIndex: Int
     )
     enum class MediaType {
-        ANIME,
-        MANGA
+        ANIME
     }
     private val ANIME_URL_PATTERN = Regex("""https://anilist\.co/anime/(\d+)/?[^\s]*""")
-    private val MANGA_URL_PATTERN = Regex("""https://anilist\.co/manga/(\d+)/?[^\s]*""")
     fun extractAnilistLinks(text: String): List<AnilistLink> {
         val links = mutableListOf<AnilistLink>()
 
@@ -31,21 +29,6 @@ object AnilistLinkParser {
             }
         }
 
-        MANGA_URL_PATTERN.findAll(text).forEach { matchResult ->
-            val id = matchResult.groupValues[1].toIntOrNull()
-            if (id != null) {
-                links.add(
-                    AnilistLink(
-                        id = id,
-                        type = MediaType.MANGA,
-                        url = matchResult.value,
-                        startIndex = matchResult.range.first,
-                        endIndex = matchResult.range.last + 1
-                    )
-                )
-            }
-        }
-
         return links.sortedBy { it.startIndex }
     }
     fun removeAnilistUrlsFromHtml(html: String): String {
@@ -53,19 +36,18 @@ object AnilistLinkParser {
 
         // Pattern 1: Remove <a href="...">URL</a> where the URL is an AniList link
         // This handles markdown-style links like [text](url) that got converted to HTML
-        val linkTagPattern = Regex("""<a\s+href=["'](https://anilist\.co/(?:anime|manga)/\d+[^"']*)["'][^>]*>\s*\1\s*</a>""")
+        val linkTagPattern = Regex("""<a\s+href=["'](https://anilist\.co/anime/\d+[^"']*)["'][^>]*>\s*\1\s*</a>""")
         result = linkTagPattern.replace(result, "")
 
         // Pattern 2: Remove <a href="...">custom text</a> where href is an AniList link
         // This preserves the link text but removes the anchor tag
-        val linkTagWithTextPattern = Regex("""<a\s+href=["']https://anilist\.co/(?:anime|manga)/\d+[^"']*["'][^>]*>(.*?)</a>""")
+        val linkTagWithTextPattern = Regex("""<a\s+href=["']https://anilist\.co/anime/\d+[^"']*["'][^>]*>(.*?)</a>""")
         result = linkTagWithTextPattern.replace(result) { matchResult ->
             matchResult.groupValues[1] // Keep the link text, remove the anchor
         }
 
         // Pattern 3: Remove bare AniList URLs (not in anchor tags)
         result = ANIME_URL_PATTERN.replace(result, "")
-        result = MANGA_URL_PATTERN.replace(result, "")
 
         // Clean up extra whitespace
         // Multiple spaces → single space

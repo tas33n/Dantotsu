@@ -15,9 +15,9 @@ class ListViewModel : ViewModel() {
     private val lists = MutableLiveData<MutableMap<String, ArrayList<Media>>>()
     private val unfilteredLists = MutableLiveData<MutableMap<String, ArrayList<Media>>>()
     fun getLists(): LiveData<MutableMap<String, ArrayList<Media>>> = lists
-    suspend fun loadLists(anime: Boolean, userId: Int, sortOrder: String? = null) {
+    suspend fun loadLists(userId: Int, sortOrder: String? = null) {
         tryWithSuspend {
-            val res = Anilist.query.getMediaLists(anime, userId, sortOrder)
+            val res = Anilist.query.getMediaLists(true, userId, sortOrder)
             lists.postValue(res)
             unfilteredLists.postValue(res)
         }

@@ -30,7 +30,7 @@ class ChartBuilder {
         }
 
         enum class MediaType {
-            ANIME, MANGA
+            ANIME
         }
 
         data class ChartPacket(

@@ -1,6 +1,7 @@
 package ani.dantotsu.others
 
 import android.animation.ObjectAnimator
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +13,6 @@ import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.FileUrl
 import ani.dantotsu.R
 import ani.dantotsu.databinding.BottomSheetImageBinding
-import ani.dantotsu.media.manga.mangareader.BaseImageAdapter.Companion.loadBitmap
-import ani.dantotsu.media.manga.mangareader.BaseImageAdapter.Companion.loadBitmapOld
-import ani.dantotsu.media.manga.mangareader.BaseImageAdapter.Companion.mergeBitmap
 import ani.dantotsu.openLinkInBrowser
 import ani.dantotsu.saveImageToDownloads
 import ani.dantotsu.setSafeOnClickListener
@@ -22,9 +20,12 @@ import ani.dantotsu.shareImage
 import ani.dantotsu.snackString
 import ani.dantotsu.toast
 import ani.dantotsu.util.StoragePermissions.Companion.downloadsPermission
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
 import com.davemorrissey.labs.subscaleview.ImageSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ImageViewDialog : BottomSheetDialogFragment() {
 
@@ -45,8 +46,8 @@ class ImageViewDialog : BottomSheetDialogFragment() {
         arguments?.let {
             _title = it.getString("title")?.replace(Regex("[\\\\/:*?\"<>|]"), "")
             reload = it.getBoolean("reload")
-            _image = it.getSerialized("image")!!
-            _image2 = it.getSerialized("image2")
+            _image = it.getSerializable("image") as? FileUrl
+            _image2 = it.getSerializable("image2") as? FileUrl
         }
     }
 
@@ -84,17 +85,17 @@ class ImageViewDialog : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val binding = _binding ?: return@launch
 
-            var bitmap = context.loadBitmapOld(image, trans1 ?: listOf())
-            var bitmap2 =
-                if (image2 != null) context.loadBitmapOld(image2, trans2 ?: listOf()) else null
-            if (bitmap == null) {
-                bitmap = context.loadBitmap(image, trans1 ?: listOf())
-                bitmap2 =
-                    if (image2 != null) context.loadBitmap(image2, trans2 ?: listOf()) else null
+            val bitmap = withContext(Dispatchers.IO) {
+                try {
+                    Glide.with(context)
+                        .asBitmap()
+                        .load(image.url)
+                        .submit()
+                        .get()
+                } catch (e: Exception) {
+                    null
+                }
             }
-
-            bitmap =
-                if (bitmap2 != null && bitmap != null) mergeBitmap(bitmap, bitmap2) else bitmap
 
             if (bitmap != null) {
                 binding.bottomImageShare.isEnabled = true

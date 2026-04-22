@@ -17,8 +17,6 @@ import ani.dantotsu.hasNotificationPermission
 import ani.dantotsu.notifications.Task
 import ani.dantotsu.parsers.AnimeSources
 import ani.dantotsu.parsers.Episode
-import ani.dantotsu.parsers.MangaChapter
-import ani.dantotsu.parsers.MangaSources
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.util.Logger
@@ -48,7 +46,7 @@ class SubscriptionNotificationTask : Task {
                     do {
                         delay(1000)
                         timeout -= 1000
-                    } while (timeout > 0 && !AnimeSources.isInitialized && !MangaSources.isInitialized)
+                    } while (timeout > 0 && !AnimeSources.isInitialized)
                     Logger.log("SubscriptionNotificationTask: timeout: $timeout")
                     if (timeout <= 0) {
                         currentlyPerforming = false
@@ -70,8 +68,6 @@ class SubscriptionNotificationTask : Task {
                             ID_SUBSCRIPTION_CHECK_PROGRESS,
                             progressNotification.build()
                         )
-                        //Seems like if the parent coroutine scope gets cancelled, the notification stays
-                        //So adding this as a safeguard? dk if this will be useful
                         CoroutineScope(Dispatchers.Main).launch {
                             delay(5 * subscriptions.size * 1000L)
                             notificationManager.cancel(ID_SUBSCRIPTION_CHECK_PROGRESS)
@@ -92,33 +88,20 @@ class SubscriptionNotificationTask : Task {
                     var newSubscriptionCount = 0
                     subscriptions.toList().map {
                         val media = it.second
-                        val text = if (media.isAnime) {
-                            val parser =
-                                SubscriptionHelper.getAnimeParser(media.id)
-                            progress(index[it.first]!!, parser.name, media.name)
-                            val ep: Episode? =
-                                SubscriptionHelper.getEpisode(
-                                    parser,
-                                    media
-                                )
-                            if (ep != null) context.getString(R.string.episode) + "${ep.number}${
+                        val parser = SubscriptionHelper.getAnimeParser(media.id)
+                        progress(index[it.first]!!, parser.name, media.name)
+                        val ep: Episode? = SubscriptionHelper.getEpisode(parser, media)
+
+                        val text: Pair<String, FileUrl?> = if (ep != null) {
+                            context.getString(R.string.episode) + "${ep.number}${
                                 if (ep.title != null) " : ${ep.title}" else ""
                             }${
                                 if (ep.isFiller) " [Filler]" else ""
                             } " + context.getString(R.string.just_released) to ep.thumbnail
-                            else null
                         } else {
-                            val parser =
-                                SubscriptionHelper.getMangaParser(media.id)
-                            progress(index[it.first]!!, parser.name, media.name)
-                            val ep: MangaChapter? =
-                                SubscriptionHelper.getChapter(
-                                    parser,
-                                    media
-                                )
-                            if (ep != null) ep.number + " " + context.getString(R.string.just_released) to null
-                            else null
-                        } ?: return@map
+                            return@map
+                        }
+
                         addSubscriptionToStore(
                             SubscriptionStore(
                                 media.name,
@@ -174,8 +157,7 @@ class SubscriptionNotificationTask : Task {
         thumbnail: FileUrl?
     ): android.app.Notification {
         val pendingIntent = getIntent(context, media.id)
-        val icon =
-            if (media.isAnime) R.drawable.ic_round_movie_filter_24 else R.drawable.ic_round_menu_book_24
+        val icon = R.drawable.ic_round_movie_filter_24
 
         val builder = NotificationCompat.Builder(context, CHANNEL_SUBSCRIPTION_CHECK)
             .setSmallIcon(icon)

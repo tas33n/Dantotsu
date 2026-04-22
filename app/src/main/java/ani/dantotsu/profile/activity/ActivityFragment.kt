@@ -115,9 +115,6 @@ class ActivityFragment : Fragment() {
             ActivityFilterType.ANIME_PROGRESS -> allActivities.filter { 
                 it.typename == "ListActivity" && it.media?.type == MediaType.ANIME
             }
-            ActivityFilterType.MANGA_PROGRESS -> allActivities.filter { 
-                it.typename == "ListActivity" && it.media?.type == MediaType.MANGA
-            }
             ActivityFilterType.STATUS -> allActivities.filter { 
                 it.typename == "ListActivity" && it.status != null 
             }
@@ -136,7 +133,6 @@ class ActivityFragment : Fragment() {
         binding.emptyTextView.text = when (currentFilter) {
             ActivityFilterType.ALL -> getString(R.string.nothing_here)
             ActivityFilterType.ANIME_PROGRESS -> getString(R.string.no_anime_progress)
-            ActivityFilterType.MANGA_PROGRESS -> getString(R.string.no_manga_progress)
             ActivityFilterType.STATUS -> getString(R.string.no_status_activities)
             ActivityFilterType.MESSAGES -> getString(R.string.no_messages)
             ActivityFilterType.TEXT -> getString(R.string.no_text_activities)

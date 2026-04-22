@@ -10,10 +10,8 @@ import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.R
 import ani.dantotsu.databinding.BottomSheetRecyclerBinding
 import ani.dantotsu.notifications.subscription.SubscriptionHelper
-import ani.dantotsu.parsers.novel.NovelExtensionManager
 import com.xwray.groupie.GroupieAdapter
 import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
-import eu.kanade.tachiyomi.extension.manga.MangaExtensionManager
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -23,8 +21,6 @@ class SubscriptionsBottomDialog : BottomSheetDialogFragment() {
     private val adapter: GroupieAdapter = GroupieAdapter()
     private var subscriptions: Map<Int, SubscriptionHelper.Companion.SubscribeMedia> = mapOf()
     private val animeExtension: AnimeExtensionManager = Injekt.get()
-    private val mangaExtensions: MangaExtensionManager = Injekt.get()
-    private val novelExtensions: NovelExtensionManager = Injekt.get()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,8 +43,7 @@ class SubscriptionsBottomDialog : BottomSheetDialogFragment() {
         binding.replyButton.visibility = View.GONE
 
         val groupedSubscriptions = subscriptions.values.groupBy {
-            if (it.isAnime) SubscriptionHelper.getAnimeParser(it.id).name
-            else SubscriptionHelper.getMangaParser(it.id).name
+            SubscriptionHelper.getAnimeParser(it.id).name
         }
 
         groupedSubscriptions.forEach { (parserName, mediaList) ->
@@ -64,18 +59,7 @@ class SubscriptionsBottomDialog : BottomSheetDialogFragment() {
     }
 
     private fun getParserIcon(parserName: String): Drawable? {
-        return when {
-            animeExtension.installedExtensionsFlow.value.any { it.name == parserName } ->
-                animeExtension.installedExtensionsFlow.value.find { it.name == parserName }?.icon
-
-            mangaExtensions.installedExtensionsFlow.value.any { it.name == parserName } ->
-                mangaExtensions.installedExtensionsFlow.value.find { it.name == parserName }?.icon
-
-            novelExtensions.installedExtensionsFlow.value.any { it.name == parserName } ->
-                novelExtensions.installedExtensionsFlow.value.find { it.name == parserName }?.icon
-
-            else -> null
-        }
+        return animeExtension.installedExtensionsFlow.value.find { it.name == parserName }?.icon
     }
 
     override fun onDestroyView() {

@@ -13,7 +13,6 @@ import ani.dantotsu.R
 import ani.dantotsu.currContext
 import ani.dantotsu.defaultHeaders
 import ani.dantotsu.media.anime.Episode
-import ani.dantotsu.parsers.Book
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.toast
@@ -54,19 +53,6 @@ object Download {
         val folder = "/Anime/${aTitle}/"
         val fileName = "$title${if (video.size != null) "(${video.size}p)" else ""}.mp4"
         val file = video.file
-        download(context, file, fileName, folder, notif)
-    }
-
-    fun download(context: Context, book: Book, pos: Int, novelTitle: String) {
-        toast(currContext()?.getString(R.string.downloading))
-        val regex = "[\\\\/:*?\"<>|]".toRegex()
-        val nTitle = novelTitle.replace(regex, "")
-        val title = book.name.replace(regex, "")
-
-        val notif = "$title : $nTitle"
-        val folder = "/Novel/${nTitle}/"
-        val fileName = "$title.epub"
-        val file = book.links[pos]
         download(context, file, fileName, folder, notif)
     }
 

@@ -59,8 +59,6 @@ import eu.kanade.tachiyomi.animesource.model.SAnime
 import eu.kanade.tachiyomi.animesource.model.SAnimeImpl
 import eu.kanade.tachiyomi.animesource.model.SEpisode
 import eu.kanade.tachiyomi.animesource.model.SEpisodeImpl
-import eu.kanade.tachiyomi.source.model.SChapter
-import eu.kanade.tachiyomi.source.model.SChapterImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -85,16 +83,16 @@ class OfflineAnimeFragment : Fragment(), OfflineAnimeSearchListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_offline_page, container, false)
 
-        val textInputLayout = view.findViewById<TextInputLayout>(R.id.offlineMangaSearchBar)
+        val textInputLayout = view.findViewById<TextInputLayout>(R.id.offlineAnimeSearchBar)
         textInputLayout.hint = "Anime"
         val currentColor = textInputLayout.boxBackgroundColor
         val semiTransparentColor = (currentColor and 0x00FFFFFF) or 0xA8000000.toInt()
         textInputLayout.boxBackgroundColor = semiTransparentColor
-        val materialCardView = view.findViewById<MaterialCardView>(R.id.offlineMangaAvatarContainer)
+        val materialCardView = view.findViewById<MaterialCardView>(R.id.offlineAnimeAvatarContainer)
         materialCardView.setCardBackgroundColor(semiTransparentColor)
         val color = requireContext().getThemeColor(android.R.attr.windowBackground)
 
-        val animeUserAvatar = view.findViewById<ShapeableImageView>(R.id.offlineMangaUserAvatar)
+        val animeUserAvatar = view.findViewById<ShapeableImageView>(R.id.offlineAnimeUserAvatar)
         animeUserAvatar.setSafeOnClickListener {
             val dialogFragment =
                 SettingsDialogFragment.newInstance(SettingsDialogFragment.Companion.PageType.OfflineANIME)
@@ -232,7 +230,7 @@ class OfflineAnimeFragment : Fragment(), OfflineAnimeSearchListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val scrollTop = view.findViewById<CardView>(R.id.mangaPageScrollTop)
+        val scrollTop = view.findViewById<CardView>(R.id.animePageScrollTop)
         scrollTop.setOnClickListener {
             gridView.smoothScrollToPositionFromTop(0, 0)
         }
@@ -320,9 +318,6 @@ class OfflineAnimeFragment : Fragment(), OfflineAnimeSearchListener {
                 false, downloadedType.titleName
             )
             val gson = GsonBuilder()
-                .registerTypeAdapter(SChapter::class.java, InstanceCreator<SChapter> {
-                    SChapterImpl()
-                })
                 .registerTypeAdapter(SAnime::class.java, InstanceCreator<SAnime> {
                     SAnimeImpl()
                 })

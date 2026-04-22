@@ -339,9 +339,6 @@ class AnimeWatchAdapter(
 
                 resetProgressDef.text = getString(currContext()!!, R.string.clear_stored_episode)
 
-                // Hidden
-                mangaScanlatorContainer.visibility = View.GONE
-                //animeDownloadContainer.visibility = View.GONE
                 fragment.requireContext().customAlertDialog().apply {
                     setTitle("Options")
                     setCustomView(dialogBinding.root)

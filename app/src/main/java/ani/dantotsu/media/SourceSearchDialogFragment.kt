@@ -15,12 +15,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.databinding.BottomSheetSourceSearchBinding
 import ani.dantotsu.media.anime.AnimeSourceAdapter
-import ani.dantotsu.media.manga.MangaSourceAdapter
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.parsers.AnimeSources
 import ani.dantotsu.parsers.HAnimeSources
-import ani.dantotsu.parsers.HMangaSources
-import ani.dantotsu.parsers.MangaSources
 import ani.dantotsu.px
 import ani.dantotsu.tryWithSuspend
 import kotlinx.coroutines.Dispatchers
@@ -33,11 +30,9 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     val model: MediaDetailsViewModel by activityViewModels()
     private var searched = false
-    var anime = true
     var i: Int? = null
     var id: Int? = null
     var media: Media? = null
-    var isNovel = false
     var onSourceSelected: ((ani.dantotsu.parsers.ShowResponse) -> Unit)? = null
 
     override fun onCreateView(
@@ -64,20 +59,8 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
                 binding.searchRecyclerView.visibility = View.GONE
                 binding.searchProgress.visibility = View.VISIBLE
 
-                val source = if (isNovel) {
-                    val novelSourceIndex = media!!.selected!!.sourceIndex.let {
-                        if (it >= model.novelSources.names.size) 0 else it
-                    }
-                    i = novelSourceIndex
-                    model.novelSources[novelSourceIndex]
-                } else if (media!!.anime != null) {
-                    if (i == null) i = media!!.selected?.sourceIndex ?: 0
-                    (if (media!!.isAdult) HAnimeSources else AnimeSources)[i!!]
-                } else {
-                    anime = false
-                    if (i == null) i = media!!.selected?.sourceIndex ?: 0
-                    (if (media!!.isAdult) HMangaSources else MangaSources)[i!!]
-                }
+                if (i == null) i = media!!.selected?.sourceIndex ?: 0
+                val source = (if (media!!.isAdult) HAnimeSources else AnimeSources)[i!!]
 
                 fun search() {
                     binding.searchBarText.clearFocus()
@@ -86,14 +69,14 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
                         model.responses.postValue(
                             withContext(Dispatchers.IO) {
                                 tryWithSuspend {
-                                    source?.search(binding.searchBarText.text.toString())
+                                    source.search(binding.searchBarText.text.toString())
                                 }
                             }
                         )
                     }
                 }
-                binding.searchSourceTitle.text = source?.name ?: "Search"
-                binding.searchBarText.setText(media!!.mangaName())
+                binding.searchSourceTitle.text = source.name
+                binding.searchBarText.setText(media!!.mainName())
                 binding.searchBarText.setOnEditorActionListener { _, actionId, _ ->
                     return@setOnEditorActionListener when (actionId) {
                         EditorInfo.IME_ACTION_SEARCH -> {
@@ -111,13 +94,7 @@ class SourceSearchDialogFragment : BottomSheetDialogFragment() {
                     if (j != null) {
                         binding.searchRecyclerView.visibility = View.VISIBLE
                         binding.searchProgress.visibility = View.GONE
-                        binding.searchRecyclerView.adapter =
-                            if (isNovel) ani.dantotsu.media.novel.NovelSearchResultAdapter(j) { selected ->
-                                onSourceSelected?.invoke(selected)
-                                dismiss()
-                            }
-                            else if (anime) AnimeSourceAdapter(j, model, i!!, media!!.id, this, scope)
-                            else MangaSourceAdapter(j, model, i!!, media!!.id, this, scope)
+                        binding.searchRecyclerView.adapter = AnimeSourceAdapter(j, model, i!!, media!!.id, this, scope)
                         binding.searchRecyclerView.layoutManager = GridLayoutManager(
                             requireActivity(),
                             clamp(

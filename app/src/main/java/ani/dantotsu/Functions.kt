@@ -516,7 +516,7 @@ class InputFilterMinMax(
     }
 
     private fun isInRange(a: Double, b: Double, c: Double): Boolean {
-        val statusStrings = currContext()!!.resources.getStringArray(R.array.status_manga)[2]
+        val statusStrings = currContext()!!.resources.getStringArray(R.array.status_anime)[2]
 
         if (c == b) {
             status?.setText(statusStrings, false)
@@ -1437,10 +1437,9 @@ fun ImageView.openImage(title: String, image: String) {
  * @param link the link to open
  */
 fun openOrCopyAnilistLink(link: String) {
-    if (link.startsWith("https://anilist.co/anime/") || link.startsWith("https://anilist.co/manga/")) {
-        val mangaAnime = link.substringAfter("https://anilist.co/").substringBefore("/")
+    if (link.startsWith("https://anilist.co/anime/")) {
         val id =
-            link.substringAfter("https://anilist.co/$mangaAnime/").substringBefore("/")
+            link.substringAfter("https://anilist.co/anime/").substringBefore("/")
                 .toIntOrNull()
         if (id != null && currContext() != null) {
             ContextCompat.startActivity(

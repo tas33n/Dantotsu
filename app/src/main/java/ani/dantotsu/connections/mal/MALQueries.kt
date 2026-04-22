@@ -61,7 +61,7 @@ class MALQueries {
             data["finish_date"] = end.toMALString()
         tryWithSuspend {
             client.put(
-                "$apiUrl/${if (isAnime) "anime" else "manga"}/$idMAL/my_list_status",
+                "$apiUrl/anime/$idMAL/my_list_status",
                 authHeader ?: return@tryWithSuspend null,
                 data = data,
             )
@@ -72,7 +72,7 @@ class MALQueries {
         if (idMAL == null) return
         tryWithSuspend {
             client.delete(
-                "$apiUrl/${if (isAnime) "anime" else "manga"}/$idMAL/my_list_status",
+                "$apiUrl/anime/$idMAL/my_list_status",
                 authHeader ?: return@tryWithSuspend null
             )
         }

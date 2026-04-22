@@ -242,18 +242,6 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
                         )
                     }
 
-                    profileMangaCount.text = user.statistics.manga.count.toString()
-                    profileMangaCountContainer.setOnClickListener {
-                        ContextCompat.startActivity(
-                            context,
-                            Intent(context, ListActivity::class.java)
-                                .putExtra("anime", false)
-                                .putExtra("userId", user.id)
-                                .putExtra("username", user.name),
-                            null
-                        )
-                    }
-
                     profileCloseButton.setOnClickListener {
                         onBackPressedDispatcher.onBackPressed()
                     }
