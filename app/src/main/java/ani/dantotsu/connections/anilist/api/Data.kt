@@ -143,13 +143,8 @@ class Query {
             @SerialName("repeatingAnime") val repeatingAnime: ani.dantotsu.connections.anilist.api.MediaListCollection?,
             @SerialName("favoriteAnime") val favoriteAnime: ani.dantotsu.connections.anilist.api.User?,
             @SerialName("plannedAnime") val plannedAnime: ani.dantotsu.connections.anilist.api.MediaListCollection?,
-            @SerialName("currentManga") val currentManga: ani.dantotsu.connections.anilist.api.MediaListCollection?,
-            @SerialName("repeatingManga") val repeatingManga: ani.dantotsu.connections.anilist.api.MediaListCollection?,
-            @SerialName("favoriteManga") val favoriteManga: ani.dantotsu.connections.anilist.api.User?,
-            @SerialName("plannedManga") val plannedManga: ani.dantotsu.connections.anilist.api.MediaListCollection?,
             @SerialName("recommendationQuery") val recommendationQuery: ani.dantotsu.connections.anilist.api.Page?,
             @SerialName("recommendationPlannedQueryAnime") val recommendationPlannedQueryAnime: ani.dantotsu.connections.anilist.api.MediaListCollection?,
-            @SerialName("recommendationPlannedQueryManga") val recommendationPlannedQueryManga: ani.dantotsu.connections.anilist.api.MediaListCollection?,
             @SerialName("missingSequelsQuery") val missingSequelsQuery: ani.dantotsu.connections.anilist.api.MediaListCollection?,
             @SerialName("Page1") val page1: ActivityPage?,
             @SerialName("Page2") val page2: ActivityPage?
@@ -163,8 +158,7 @@ class Query {
     ) {
         @Serializable
         data class Data(
-            @SerialName("favoriteAnime") val favoriteAnime: ani.dantotsu.connections.anilist.api.User?,
-            @SerialName("favoriteManga") val favoriteManga: ani.dantotsu.connections.anilist.api.User?
+            @SerialName("favoriteAnime") val favoriteAnime: ani.dantotsu.connections.anilist.api.User?
         )
     }
 
@@ -177,21 +171,6 @@ class Query {
         data class Data(
             @SerialName("recentUpdates") val recentUpdates: ani.dantotsu.connections.anilist.api.Page?,
             @SerialName("trendingMovies") val trendingMovies: ani.dantotsu.connections.anilist.api.Page?,
-            @SerialName("topRated") val topRated: ani.dantotsu.connections.anilist.api.Page?,
-            @SerialName("mostFav") val mostFav: ani.dantotsu.connections.anilist.api.Page?,
-        )
-    }
-
-    @Serializable
-    data class MangaList(
-        @SerialName("data")
-        val data: Data?
-    ) {
-        @Serializable
-        data class Data(
-            @SerialName("trendingManga") val trendingManga: ani.dantotsu.connections.anilist.api.Page?,
-            @SerialName("trendingManhwa") val trendingManhwa: ani.dantotsu.connections.anilist.api.Page?,
-            @SerialName("trendingNovel") val trendingNovel: ani.dantotsu.connections.anilist.api.Page?,
             @SerialName("topRated") val topRated: ani.dantotsu.connections.anilist.api.Page?,
             @SerialName("mostFav") val mostFav: ani.dantotsu.connections.anilist.api.Page?,
         )
@@ -395,8 +374,7 @@ class Query {
 
     @Serializable
     data class NNUserStatisticTypes(
-        @SerialName("anime") var anime: NNUserStatistics,
-        @SerialName("manga") var manga: NNUserStatistics
+        @SerialName("anime") var anime: NNUserStatistics
     ) : java.io.Serializable
 
     @Serializable
@@ -406,16 +384,12 @@ class Query {
         @SerialName("standardDeviation") var standardDeviation: Float,
         @SerialName("minutesWatched") var minutesWatched: Int,
         @SerialName("episodesWatched") var episodesWatched: Int,
-        @SerialName("chaptersRead") var chaptersRead: Int,
-        @SerialName("volumesRead") var volumesRead: Int,
     ) : java.io.Serializable
 
     @Serializable
     data class UserFavourites(
         @SerialName("anime")
         val anime: UserMediaFavouritesCollection,
-        @SerialName("manga")
-        val manga: UserMediaFavouritesCollection,
         @SerialName("characters")
         val characters: UserCharacterFavouritesCollection,
         @SerialName("staff")
@@ -506,9 +480,7 @@ class Query {
     @Serializable
     data class StatisticsTypes(
         @SerialName("anime")
-        val anime: Statistics,
-        @SerialName("manga")
-        val manga: Statistics
+        val anime: Statistics
     ) : java.io.Serializable
 
     @Serializable
@@ -523,10 +495,6 @@ class Query {
         val minutesWatched: Int,
         @SerialName("episodesWatched")
         val episodesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
-        @SerialName("volumesRead")
-        val volumesRead: Int,
         @SerialName("formats")
         val formats: List<StatisticsFormat>,
         @SerialName("statuses")
@@ -561,8 +529,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("format")
@@ -577,8 +543,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("status")
@@ -593,8 +557,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("score")
@@ -609,8 +571,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("length")
@@ -625,8 +585,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("releaseYear")
@@ -641,8 +599,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("startYear")
@@ -657,8 +613,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("genre")
@@ -673,8 +627,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("tag")
@@ -697,8 +649,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("country")
@@ -713,8 +663,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("voiceActor")
@@ -757,8 +705,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("staff")
@@ -773,8 +719,6 @@ class Query {
         val meanScore: Float,
         @SerialName("minutesWatched")
         val minutesWatched: Int,
-        @SerialName("chaptersRead")
-        val chaptersRead: Int,
         @SerialName("mediaIds")
         val mediaIds: List<Int>,
         @SerialName("studio")

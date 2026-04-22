@@ -57,7 +57,7 @@ fun characterInformation(includeMediaInfo: Boolean) = """
           idMal
           isAdult
           status
-          chapters
+          
           episodes
           nextAiringEpisode { episode }
           type
@@ -98,7 +98,7 @@ fun studioInformation(page: Int, perPage: Int) = """
           idMal
           isAdult
           status
-          chapters
+          
           episodes
           nextAiringEpisode { episode }
           type
@@ -162,7 +162,7 @@ fun staffInformation(page: Int, perPage: Int) = """
           idMal
           isAdult
           status
-          chapters
+          
           episodes
           nextAiringEpisode { episode }
           type
@@ -204,7 +204,7 @@ fun userInformation() = """
     siteUrl
 """.prepare()
 
-fun aniMangaSearch(perPage: Int?) = """
+fun animeSearch(perPage: Int?) = """
     query (${"$"}page: Int = 1, ${"$"}id: Int, ${"$"}type: MediaType, ${"$"}isAdult: Boolean = false, ${"$"}search: String, ${"$"}format: [MediaFormat], ${"$"}status: MediaStatus, ${"$"}countryOfOrigin: CountryCode, ${"$"}source: MediaSource, ${"$"}season: MediaSeason, ${"$"}seasonYear: Int, ${"$"}year: String, ${"$"}onList: Boolean, ${"$"}yearLesser: FuzzyDateInt, ${"$"}yearGreater: FuzzyDateInt, ${"$"}episodeLesser: Int, ${"$"}episodeGreater: Int, ${"$"}durationLesser: Int, ${"$"}durationGreater: Int, ${"$"}chapterLesser: Int, ${"$"}chapterGreater: Int, ${"$"}volumeLesser: Int, ${"$"}volumeGreater: Int, ${"$"}licensedBy: [String], ${"$"}isLicensed: Boolean, ${"$"}genres: [String], ${"$"}excludedGenres: [String], ${"$"}tags: [String], ${"$"}excludedTags: [String], ${"$"}minimumTagRank: Int, ${"$"}sort: [MediaSort] = [POPULARITY_DESC, SCORE_DESC, START_DATE_DESC]) {
       Page(page: ${"$"}page, perPage: ${perPage ?: 50}) {
         $standardPageInformation
@@ -221,11 +221,12 @@ idMal
 siteUrl
 isAdult
 status(version: 2)
-chapters
+
 episodes
 nextAiringEpisode {
   episode
   airingAt
+  timeUntilAiring
 }
 type
 genres

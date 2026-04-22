@@ -199,12 +199,6 @@ class PlayerSettingsActivity :
             PrefManager.getVal(PrefName.AskIndividualPlayer)
         binding.playerSettingsAskUpdateProgress.setOnCheckedChangeListener { _, isChecked ->
             PrefManager.setVal(PrefName.AskIndividualPlayer, isChecked)
-            binding.playerSettingsAskChapterZero.isEnabled = !isChecked
-        }
-        binding.playerSettingsAskChapterZero.isChecked =
-            PrefManager.getVal(PrefName.ChapterZeroPlayer)
-        binding.playerSettingsAskChapterZero.setOnCheckedChangeListener { _, isChecked ->
-            PrefManager.setVal(PrefName.ChapterZeroPlayer, isChecked)
         }
         binding.playerSettingsAskUpdateHentai.isChecked =
             PrefManager.getVal(PrefName.UpdateForHPlayer)

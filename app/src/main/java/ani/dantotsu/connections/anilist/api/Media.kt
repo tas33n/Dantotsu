@@ -18,7 +18,7 @@ data class Media(
     // The official titles of the media in various languages
     @SerialName("title") var title: MediaTitle?,
 
-    // The type of the media; anime or manga
+    // The type of the media; anime
     @SerialName("type") var type: MediaType?,
 
     // The format the media was released in
@@ -50,12 +50,6 @@ data class Media(
 
     // The general length of each anime episode in minutes
     @SerialName("duration") var duration: Int?,
-
-    // The amount of chapters the manga has when complete
-    @SerialName("chapters") var chapters: Int?,
-
-    // The amount of volumes the manga has when complete
-    @SerialName("volumes") var volumes: Int?,
 
     // Where the media was created. (ISO 3166-1 alpha-2)
     // Originally a "CountryCode"
@@ -194,14 +188,6 @@ data class MediaTitle(
     @SerialName("userPreferred") var userPreferred: String,
 ) : java.io.Serializable
 
-@Serializable
-enum class MediaType {
-    ANIME, MANGA;
-
-    override fun toString(): String {
-        return super.toString().replace("_", " ")
-    }
-}
 
 @Serializable
 enum class MediaStatus {
@@ -284,19 +270,16 @@ data class MediaList(
     // The id of the media
     @SerialName("mediaId") var mediaId: Int?,
 
-    // The watching/reading status
+    // The watching status
     @SerialName("status") var status: MediaListStatus?,
 
     // The score of the entry
     @SerialName("score") var score: Float?,
 
-    // The amount of episodes/chapters consumed by the user
+    // The amount of episodes consumed by the user
     @SerialName("progress") var progress: Int?,
 
-    // The amount of volumes read by the user
-    @SerialName("progressVolumes") var progressVolumes: Int?,
-
-    // The amount of times the user has rewatched/read the media
+    // The amount of times the user has rewatched the media
     @SerialName("repeat") var repeat: Int?,
 
     // Priority of planning
@@ -336,7 +319,16 @@ data class MediaList(
 
 @Serializable
 enum class MediaListStatus {
-    CURRENT, PLANNING, COMPLETED, DROPPED, PAUSED, REPEATING;
+    PLANNING, CURRENT, COMPLETED, REPEATING, PAUSED, DROPPED;
+
+    override fun toString(): String {
+        return super.toString().replace("_", " ")
+    }
+}
+
+@Serializable
+enum class MediaType {
+    ANIME, MANGA;
 
     override fun toString(): String {
         return super.toString().replace("_", " ")
@@ -345,7 +337,7 @@ enum class MediaListStatus {
 
 @Serializable
 enum class MediaSource {
-    ORIGINAL, MANGA, LIGHT_NOVEL, VISUAL_NOVEL, VIDEO_GAME, OTHER, NOVEL, DOUJINSHI, ANIME, WEB_NOVEL, LIVE_ACTION, GAME, COMIC, MULTIMEDIA_PROJECT, PICTURE_BOOK;
+    ORIGINAL, MANGA, LIGHT_NOVEL, VISUAL_NOVEL, VIDEO_GAME, OTHER, NOVEL, ANIME, LIVE_ACTION, GAME, MULTIMEDIA_PROJECT, PICTURE_BOOK;
 
     override fun toString(): String {
         return super.toString().replace("_", " ")
@@ -354,7 +346,7 @@ enum class MediaSource {
 
 @Serializable
 enum class MediaFormat {
-    TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC, MANGA, NOVEL, ONE_SHOT;
+    TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC;
 
     override fun toString(): String {
         return super.toString().replace("_", " ")
