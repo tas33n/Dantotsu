@@ -39,6 +39,19 @@ class ExtensionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.searchExtensionsButton.setOnClickListener {
+            binding.headerLayout.visibility = View.GONE
+            binding.searchView.visibility = View.VISIBLE
+            binding.searchViewText.requestFocus()
+        }
+
+        binding.searchViewText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && binding.searchViewText.text.isNullOrEmpty()) {
+                binding.headerLayout.visibility = View.VISIBLE
+                binding.searchView.visibility = View.GONE
+            }
+        }
+
         binding.testButton.setOnClickListener {
             ContextCompat.startActivity(
                 requireContext(),

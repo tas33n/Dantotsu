@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/apple_blue" />
-    <corners android:radius="40dp" />
+    <!-- Using a semi-transparent color for the glass effect -->
+    <solid android:color="#B3FFFFFF" /> <!-- Default light, will be tinted in code -->
+    <corners android:radius="30dp" />
+    <stroke android:width="1dp" android:color="#33FFFFFF" />
 </shape>

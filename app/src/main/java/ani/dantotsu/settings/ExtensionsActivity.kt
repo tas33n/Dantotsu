@@ -40,20 +40,17 @@ class ExtensionsActivity : AppCompatActivity() {
         binding = ActivityExtensionsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initActivity(this)
-        AndroidBug5497Workaround.assistActivity(this) {
-            if (it) {
-                binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    bottomMargin = statusBarHeight
-                }
-            } else {
-                binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    bottomMargin = statusBarHeight + navBarHeight
-                }
-            }
+        binding.searchExtensionsButton.setOnClickListener {
+            binding.headerLayout.visibility = View.GONE
+            binding.searchView.visibility = View.VISIBLE
+            binding.searchViewText.requestFocus()
         }
 
-        binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            bottomMargin = statusBarHeight + navBarHeight
+        binding.searchViewText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && binding.searchViewText.text.isNullOrEmpty()) {
+                binding.headerLayout.visibility = View.VISIBLE
+                binding.searchView.visibility = View.GONE
+            }
         }
 
         binding.testButton.setOnClickListener {

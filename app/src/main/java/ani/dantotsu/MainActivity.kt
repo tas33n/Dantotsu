@@ -4,6 +4,9 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
+import android.graphics.RenderEffect
+import android.graphics.Shader
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
@@ -255,9 +258,29 @@ class MainActivity : AppCompatActivity() {
             navbar.visibility = View.VISIBLE
             
             if (PrefManager.getVal<Boolean>(PrefName.FloatingNavBar)) {
-                navbar.setBackgroundResource(R.drawable.bottom_nav_apple)
-                navbar.tabColorSelected = ContextCompat.getColor(this, R.color.apple_blue)
-                navbar.indicatorColor = ContextCompat.getColor(this, R.color.apple_blue)
+                val typedValue = android.util.TypedValue()
+                theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
+                val colorSurface = typedValue.data
+                theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
+                val colorPrimary = typedValue.data
+
+                val alphaColor = Color.argb(
+                    180,
+                    Color.red(colorSurface),
+                    Color.green(colorSurface),
+                    Color.blue(colorSurface)
+                )
+
+                val drawable = ContextCompat.getDrawable(this, R.drawable.bottom_nav_apple) as GradientDrawable
+                drawable.setColor(alphaColor)
+                navbar.background = drawable
+                navbar.tabColorSelected = colorPrimary
+                navbar.indicatorColor = colorPrimary
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    navbar.setRenderEffect(RenderEffect.createBlurEffect(30f, 30f, Shader.TileMode.MIRROR))
+                }
+                binding.includedNavbar.navbarContainer.setPadding(32, 0, 32, 48)
             }
 
             binding.mainProgressBar.visibility = View.GONE
