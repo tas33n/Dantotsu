@@ -20,7 +20,6 @@ import ani.dantotsu.media.Media
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.notifications.TaskScheduler
 import ani.dantotsu.notifications.anilist.AnilistNotificationWorker
-import ani.dantotsu.notifications.comment.CommentNotificationWorker
 import ani.dantotsu.notifications.subscription.SubscriptionHelper
 import ani.dantotsu.notifications.subscription.SubscriptionNotificationWorker
 import ani.dantotsu.openSettings
@@ -62,13 +61,6 @@ class SettingsNotificationActivity : AppCompatActivity() {
             }
             val aTimeNames = AnilistNotificationWorker.checkIntervals.map { it.toInt() }
             val aItems = aTimeNames.map {
-                val mins = it % 60
-                val hours = it / 60
-                if (it > 0) "${if (hours > 0) "$hours hrs " else ""}${if (mins > 0) "$mins mins" else ""}"
-                else getString(R.string.do_not_update)
-            }
-            val cTimeNames = CommentNotificationWorker.checkIntervals.map { it.toInt() }
-            val cItems = cTimeNames.map {
                 val mins = it % 60
                 val hours = it / 60
                 if (it > 0) "${if (hours > 0) "$hours hrs " else ""}${if (mins > 0) "$mins mins" else ""}"
@@ -130,7 +122,6 @@ class SettingsNotificationActivity : AppCompatActivity() {
                                 }
 
                                 val animeLists = Anilist.query.getMediaLists(true, userId)
-                                val mangaLists = Anilist.query.getMediaLists(false, userId)
 
                                 val selectableLists = linkedMapOf<String, ArrayList<Media>>()
                                 fun addSelectableLists(prefix: String, lists: MutableMap<String, ArrayList<Media>>) {
@@ -141,7 +132,6 @@ class SettingsNotificationActivity : AppCompatActivity() {
                                     }
                                 }
                                 addSelectableLists(getString(R.string.anime), animeLists)
-                                addSelectableLists(getString(R.string.manga), mangaLists)
 
                                 if (selectableLists.isEmpty()) {
                                     withContext(Dispatchers.Main) { toast(getString(R.string.no_lists_available_to_import)) }
@@ -201,30 +191,24 @@ class SettingsNotificationActivity : AppCompatActivity() {
                                 }
 
                                 val animeLists = Anilist.query.getMediaLists(true, userId)
-                                val mangaLists = Anilist.query.getMediaLists(false, userId)
                                 val animeAll = animeLists["All"] ?: arrayListOf()
-                                val mangaAll = mangaLists["All"] ?: arrayListOf()
 
-                                if (animeAll.isEmpty() && mangaAll.isEmpty()) {
+                                if (animeAll.isEmpty()) {
                                     withContext(Dispatchers.Main) { toast(getString(R.string.no_lists_available_to_import)) }
                                     return@launch
                                 }
 
                                 val statusKeys = resources.getStringArray(R.array.status)
                                 val animeStatuses = resources.getStringArray(R.array.status_anime)
-                                val mangaStatuses = resources.getStringArray(R.array.status_manga)
                                 val count = minOf(
                                     statusKeys.size,
-                                    animeStatuses.size,
-                                    mangaStatuses.size
+                                    animeStatuses.size
                                 )
-                                val titles = ArrayList<String>(count * 2)
-                                val statusMeta = ArrayList<Pair<Boolean, String>>(count * 2)
+                                val titles = ArrayList<String>(count)
+                                val statusMeta = ArrayList<Pair<Boolean, String>>(count)
                                 repeat(count) { index ->
                                     titles.add("${getString(R.string.anime)} • ${animeStatuses[index]}")
                                     statusMeta.add(true to statusKeys[index])
-                                    titles.add("${getString(R.string.manga)} • ${mangaStatuses[index]}")
-                                    statusMeta.add(false to statusKeys[index])
                                 }
                                 val selected = BooleanArray(titles.size) { false }
 
@@ -235,11 +219,9 @@ class SettingsNotificationActivity : AppCompatActivity() {
                                         setPosButton(R.string.import_action) {
                                             lifecycleScope.launch(Dispatchers.IO) {
                                                 val animeSelected = mutableSetOf<String>()
-                                                val mangaSelected = mutableSetOf<String>()
-                                                statusMeta.forEachIndexed { index, (isAnime, status) ->
+                                                statusMeta.forEachIndexed { index, (_, status) ->
                                                     if (selected[index]) {
-                                                        if (isAnime) animeSelected.add(status)
-                                                        else mangaSelected.add(status)
+                                                        animeSelected.add(status)
                                                     }
                                                 }
                                                 val existingIds =
@@ -262,7 +244,6 @@ class SettingsNotificationActivity : AppCompatActivity() {
                                                     }
                                                 }
                                                 importMedia(animeAll, animeSelected)
-                                                importMedia(mangaAll, mangaSelected)
                                                 withContext(Dispatchers.Main) {
                                                     toast(
                                                         getString(
@@ -334,35 +315,6 @@ class SettingsNotificationActivity : AppCompatActivity() {
                                         getString(
                                             R.string.anilist_notifications_checking_time,
                                             aItems[i]
-                                        )
-                                    TaskScheduler.create(
-                                        context, PrefManager.getVal(PrefName.UseAlarmManager)
-                                    ).scheduleAllTasks(context)
-                                }
-                                show()
-                            }
-                        }
-                    ),
-                    Settings(
-                        type = 1,
-                        name = getString(
-                            R.string.comment_notification_checking_time,
-                            cItems[PrefManager.getVal(PrefName.CommentNotificationInterval)]
-                        ),
-                        desc = getString(R.string.comment_notification_checking_time_desc),
-                        icon = R.drawable.ic_round_notifications_none_24,
-                        onClick = {
-                            context.customAlertDialog().apply {
-                                 setTitle(R.string.subscriptions_checking_time)
-                                 singleChoiceItems(
-                                    cItems.toTypedArray(),
-                                    PrefManager.getVal<Int>(PrefName.CommentNotificationInterval)
-                                ) {  i ->
-                                    PrefManager.setVal(PrefName.CommentNotificationInterval, i)
-                                    it.settingsTitle.text =
-                                        getString(
-                                            R.string.comment_notification_checking_time,
-                                            cItems[i]
                                         )
                                     TaskScheduler.create(
                                         context, PrefManager.getVal(PrefName.UseAlarmManager)

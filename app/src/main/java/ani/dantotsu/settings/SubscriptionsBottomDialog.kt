@@ -5,85 +5,66 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import ani.dantotsu.BottomSheetDialogFragment
 import ani.dantotsu.R
-import ani.dantotsu.databinding.BottomSheetSubscriptionsBinding
-import ani.dantotsu.media.SubscriptionAdapter
-import ani.dantotsu.media.SubscriptionHelper
-import ani.dantotsu.snackString
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import ani.dantotsu.databinding.BottomSheetRecyclerBinding
+import ani.dantotsu.notifications.subscription.SubscriptionHelper
+import com.xwray.groupie.GroupieAdapter
+import eu.kanade.tachiyomi.extension.anime.AnimeExtensionManager
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 
 class SubscriptionsBottomDialog : BottomSheetDialogFragment() {
-    private var _binding: BottomSheetSubscriptionsBinding? = null
+    private var _binding: BottomSheetRecyclerBinding? = null
     private val binding get() = _binding!!
-
-    private var subscriptions: Map<Int, SubscriptionHelper.Companion.SubscribeMedia> = emptyMap()
-    private var filteredSubscriptions: List<SubscriptionHelper.Companion.SubscribeMedia> = emptyList()
-    private var currentFilter: Filter = Filter.ALL
-
-    enum class Filter {
-        ALL, ANIME, MANGA
-    }
+    private val adapter: GroupieAdapter = GroupieAdapter()
+    private var subscriptions: Map<Int, SubscriptionHelper.Companion.SubscribeMedia> = mapOf()
+    private val animeExtension: AnimeExtensionManager = Injekt.get()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = BottomSheetSubscriptionsBinding.inflate(inflater, container, false)
-        return binding.root
+    ): View? {
+        _binding = BottomSheetRecyclerBinding.inflate(inflater, container, false)
+        return _binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        binding.repliesRecyclerView.adapter = adapter
+        binding.repliesRecyclerView.layoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+        val context = requireContext()
+        binding.title.text = context.getString(R.string.subscriptions)
+        binding.replyButton.visibility = View.GONE
 
-        binding.filterButton.setOnClickListener { showFilterMenu(it) }
-        applyFilter(currentFilter)
+        val groupedSubscriptions = subscriptions.values.groupBy {
+            SubscriptionHelper.getAnimeParser(it.id).name
+        }
+
+        groupedSubscriptions.forEach { (parserName, mediaList) ->
+            adapter.add(SubscriptionSource(
+                parserName,
+                mediaList.toMutableList(),
+                adapter,
+                getParserIcon(parserName)
+            ) { group ->
+                adapter.remove(group)
+            })
+        }
     }
 
-    private fun showFilterMenu(view: View) {
-        val popup = PopupMenu(requireContext(), view)
-        popup.menuInflater.inflate(R.menu.subscriptions_filter_menu, popup.menu)
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.filter_all -> applyFilter(Filter.ALL)
-                R.id.filter_anime -> applyFilter(Filter.ANIME)
-                R.id.filter_manga -> applyFilter(Filter.MANGA)
-            }
-            true
-        }
-        popup.show()
-    }
-
-    private fun applyFilter(filter: Filter) {
-        currentFilter = filter
-        filteredSubscriptions = when (filter) {
-            Filter.ALL -> subscriptions.values.toList()
-            Filter.ANIME -> subscriptions.values.filter { it.type == "ANIME" }
-            Filter.MANGA -> subscriptions.values.filter { it.type == "MANGA" }
-        }
-
-        binding.subscriptionsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = SubscriptionAdapter(filteredSubscriptions)
-        }
-
-        binding.noSubscriptionsText.isVisible = filteredSubscriptions.isEmpty()
-        
-        val filterIcon: Drawable? = when (filter) {
-            Filter.ALL -> ContextCompat.getDrawable(requireContext(), R.drawable.ic_round_filter_list_24)
-            Filter.ANIME -> ContextCompat.getDrawable(requireContext(), R.drawable.ic_round_movie_filter_24)
-            Filter.MANGA -> ContextCompat.getDrawable(requireContext(), R.drawable.ic_round_import_contacts_24)
-        }
-        binding.filterButton.setImageDrawable(filterIcon)
+    private fun getParserIcon(parserName: String): Drawable? {
+        return animeExtension.installedExtensionsFlow.value.find { it.name == parserName }?.icon
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 
     companion object {

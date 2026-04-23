@@ -33,6 +33,9 @@ import ani.dantotsu.snackString
 import ani.dantotsu.util.Logger
 import ani.dantotsu.util.customAlertDialog
 
+import ani.dantotsu.navBarHeight
+import ani.dantotsu.px
+import androidx.core.view.updatePaddingRelative
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputLayout
 import eu.kanade.tachiyomi.animesource.ConfigurableAnimeSource
@@ -189,6 +192,7 @@ class InstalledAnimeExtensionsFragment : Fragment(), SearchQueryHandler {
         extensionsRecyclerView = binding.allExtensionsRecyclerView
         extensionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         extensionsRecyclerView.adapter = extensionsAdapter
+        extensionsRecyclerView.updatePaddingRelative(bottom = navBarHeight + 160f.px)
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0

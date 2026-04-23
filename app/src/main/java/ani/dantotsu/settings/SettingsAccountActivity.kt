@@ -260,18 +260,6 @@ class SettingsAccountActivity : AppCompatActivity() {
                     },
                     isActivity = true
                 ),
-                Settings(
-                    type = 2,
-                    name = getString(R.string.comments_button),
-                    desc = getString(R.string.comments_button_desc),
-                    icon = R.drawable.ic_round_comment_24,
-                    isChecked = PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1,
-                    switch = { isChecked, _ ->
-                        PrefManager.setVal(PrefName.CommentsEnabled, if (isChecked) 1 else 2)
-                        reload()
-                    },
-                    isVisible = Anilist.token != null
-                ),
             )
         )
         binding.settingsRecyclerView.layoutManager =

@@ -30,7 +30,6 @@ import ani.dantotsu.connections.anilist.AnilistHomeViewModel
 import ani.dantotsu.connections.anilist.getUserId
 import ani.dantotsu.currContext
 import ani.dantotsu.databinding.FragmentHomeBinding
-import ani.dantotsu.home.status.UserStatusAdapter
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.Media
 import ani.dantotsu.media.MediaAdaptor
@@ -357,35 +356,6 @@ class HomeFragment : Fragment() {
             binding.homeRecommendedMore,
             getString(R.string.recommended)
         )
-        binding.homeUserStatusContainer.visibility = View.VISIBLE
-        binding.homeUserStatusProgressBar.visibility = View.VISIBLE
-        binding.homeUserStatusRecyclerView.visibility = View.GONE
-        model.getUserStatus().observe(viewLifecycleOwner) {
-            binding.homeUserStatusRecyclerView.visibility = View.GONE
-            if (it != null) {
-                if (it.isNotEmpty()) {
-                    PrefManager.getLiveVal(PrefName.RefreshStatus, false).apply {
-                        asLiveBool()
-                        observe(viewLifecycleOwner) { _ ->
-                            binding.homeUserStatusRecyclerView.adapter = UserStatusAdapter(it)
-                        }
-                    }
-                    binding.homeUserStatusRecyclerView.layoutManager = LinearLayoutManager(
-                        requireContext(),
-                        LinearLayoutManager.HORIZONTAL,
-                        false
-                    )
-                    binding.homeUserStatusRecyclerView.visibility = View.VISIBLE
-                    binding.homeUserStatusRecyclerView.layoutAnimation =
-                        LayoutAnimationController(setSlideIn(), 0.25f)
-
-                } else {
-                    binding.homeUserStatusContainer.visibility = View.GONE
-                }
-                binding.homeUserStatusProgressBar.visibility = View.GONE
-            }
-
-        }
         binding.homeHiddenItemsContainer.visibility = View.GONE
         model.getHidden().observe(viewLifecycleOwner) {
             if (it != null) {
@@ -448,7 +418,6 @@ class HomeFragment : Fragment() {
             "AnimeFav",
             "AnimePlanned",
             "Recommendation",
-            "UserStatus",
             "MissingSequels",
         )
 
@@ -457,7 +426,6 @@ class HomeFragment : Fragment() {
             binding.homeFavAnimeContainer,
             binding.homePlannedAnimeContainer,
             binding.homeRecommendedContainer,
-            binding.homeUserStatusContainer,
             binding.homeMissingSequelsContainer,
         )
 
@@ -519,8 +487,7 @@ class HomeFragment : Fragment() {
                     }
 
                     val initHomePage = async(Dispatchers.IO) { model.initHomePage() }
-                    val initUserStatus = async(Dispatchers.IO) { model.initUserStatus() }
-                    awaitAll(initHomePage,initUserStatus)
+                    initHomePage.await()
 
                     withContext(Dispatchers.Main) {
                         model.empty.postValue(empty)

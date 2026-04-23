@@ -1,10 +1,8 @@
 package ani.dantotsu.settings.saving
 
 import android.graphics.Color
-import ani.dantotsu.connections.comments.AuthResponse
 import ani.dantotsu.connections.mal.MAL
 import ani.dantotsu.media.SearchHistory
-import ani.dantotsu.notifications.comment.CommentStore
 import ani.dantotsu.notifications.subscription.SubscriptionStore
 import ani.dantotsu.settings.saving.internal.Location
 import ani.dantotsu.settings.saving.internal.Pref
@@ -38,7 +36,6 @@ enum class PrefName(val data: Pref) {
     SortedStaffSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedStudioSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
     SortedUserSH(Pref(Location.General, List::class, listOf<SearchHistory>())),
-    CommentNotificationInterval(Pref(Location.General, Int::class, 0)),
     AnilistNotificationInterval(Pref(Location.General, Int::class, 3)),
     UnreadUserNotifications(Pref(Location.General, Int::class, 0)),
     UnreadMediaNotifications(Pref(Location.General, Int::class, 0)),
@@ -49,7 +46,6 @@ enum class PrefName(val data: Pref) {
     UseAlarmManager(Pref(Location.General, Boolean::class, false)),
     IncludeAnimeList(Pref(Location.General, Boolean::class, true)),
     AdultOnly(Pref(Location.General, Boolean::class, false)),
-    CommentsEnabled(Pref(Location.General, Int::class, 0)),
     EnableSocks5Proxy(Pref(Location.General, Boolean::class, false)),
     ProxyAuthEnabled(Pref(Location.General, Boolean::class, false)),
     AnimeSearchDirect(Pref(Location.General, Boolean::class, true)),
@@ -93,9 +89,9 @@ enum class PrefName(val data: Pref) {
     ListGrid(Pref(Location.UI, Boolean::class, true)),
     PopularAnimeList(Pref(Location.UI, Boolean::class, true)),
     AnimeListSortOrder(Pref(Location.UI, String::class, "score")),
-    CommentSortOrder(Pref(Location.UI, String::class, "newest")),
     FollowerLayout(Pref(Location.UI, Int::class, 0)),
     ShowNotificationRedDot(Pref(Location.UI, Boolean::class, true)),
+    FloatingNavBar(Pref(Location.UI, Boolean::class, false)),
 
 
     //Player
@@ -162,12 +158,8 @@ enum class PrefName(val data: Pref) {
     TagsListIsAdult(Pref(Location.Irrelevant, Set::class, setOf<String>())),
     TagsListNonAdult(Pref(Location.Irrelevant, Set::class, setOf<String>())),
     MakeDefault(Pref(Location.Irrelevant, Boolean::class, true)),
-    FirstComment(Pref(Location.Irrelevant, Boolean::class, true)),
-    CommentAuthResponse(Pref(Location.Irrelevant, AuthResponse::class, "")),
-    CommentTokenExpiry(Pref(Location.Irrelevant, Long::class, 0L)),
     LogToFile(Pref(Location.Irrelevant, Boolean::class, false)),
     RecentGlobalNotification(Pref(Location.Irrelevant, Int::class, 0)),
-    CommentNotificationStore(Pref(Location.Irrelevant, List::class, listOf<CommentStore>())),
     SubscriptionNotificationStore(
         Pref(
             Location.Irrelevant,
@@ -175,7 +167,6 @@ enum class PrefName(val data: Pref) {
             listOf<SubscriptionStore>()
         )
     ),
-    UnreadCommentNotifications(Pref(Location.Irrelevant, Int::class, 0)),
     DownloadsDir(Pref(Location.Irrelevant, String::class, "")),
     OC(Pref(Location.Irrelevant, Boolean::class, false)),
     RefreshStatus(Pref(Location.Irrelevant, Boolean::class, false)),

@@ -72,8 +72,7 @@ class AnilistQueries {
         val userCount = PrefManager.getVal<Int>(PrefName.UnreadUserNotifications)
         val mediaCount = PrefManager.getVal<Int>(PrefName.UnreadMediaNotifications)
         val subsCount = PrefManager.getVal<Int>(PrefName.UnreadSubscriptionNotifications)
-        val commentCount = PrefManager.getVal<Int>(PrefName.UnreadCommentNotifications)
-        Anilist.unreadNotificationCount = anilistCount + subsCount + commentCount
+        Anilist.unreadNotificationCount = anilistCount + subsCount
         Anilist.initialized = true
 
         user.options?.let {
@@ -257,7 +256,7 @@ class AnilistQueries {
                             }
                         }
                         if (fetchedMedia.reviews?.nodes != null) {
-                            media.review = fetchedMedia.reviews!!.nodes as ArrayList<Query.Review>
+                            media.review = ArrayList(fetchedMedia.reviews!!.nodes!!)
                         }
                         if (user?.mediaList?.isNotEmpty() == true) {
                             media.users = user.mediaList?.mapNotNull {
@@ -1683,9 +1682,6 @@ Page(page:$page,perPage:50) {
             force = true
         )
         if (res != null && resetNotification) {
-            val commentNotifications = PrefManager.getVal(PrefName.UnreadCommentNotifications, 0)
-            res.data.user.unreadNotificationCount += commentNotifications
-            PrefManager.setVal(PrefName.UnreadCommentNotifications, 0)
             Anilist.unreadNotificationCount = 0
         }
         return res

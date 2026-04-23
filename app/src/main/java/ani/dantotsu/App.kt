@@ -10,7 +10,6 @@ import ani.dantotsu.addons.download.DownloadAddonManager
 import ani.dantotsu.addons.torrent.TorrentAddonManager
 import ani.dantotsu.aniyomi.anime.custom.AppModule
 import ani.dantotsu.aniyomi.anime.custom.PreferenceModule
-import ani.dantotsu.connections.comments.CommentsAPI
 import ani.dantotsu.connections.crashlytics.CrashlyticsInterface
 import ani.dantotsu.notifications.TaskScheduler
 import ani.dantotsu.others.DisabledReports
@@ -92,11 +91,6 @@ class App : Application() {
         if (!LogcatLogger.isInstalled) {
             LogcatLogger.install(AndroidLogcatLogger(LogPriority.VERBOSE))
         }
-
-        if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 0) {
-            PrefManager.setVal(PrefName.CommentsEnabled, 2)
-        }
-
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             animeExtensionManager = Injekt.get()
@@ -107,23 +101,20 @@ class App : Application() {
             AnimeSources.init(animeExtensionManager.installedExtensionsFlow)
         }
         GlobalScope.launch {
-            torrentAddonManager = Injekt.get()
-            downloadAddonManager = Injekt.get()
-            torrentAddonManager.init()
-            downloadAddonManager.init()
-            if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) {
-                CommentsAPI.fetchAuthToken(this@App)
-            }
+    torrentAddonManager = Injekt.get()
+    downloadAddonManager = Injekt.get()
+    torrentAddonManager.init()
+    downloadAddonManager.init()
 
-            val useAlarmManager = PrefManager.getVal<Boolean>(PrefName.UseAlarmManager)
-            val scheduler = TaskScheduler.create(this@App, useAlarmManager)
-            try {
-                scheduler.scheduleAllTasks(this@App)
-            } catch (e: IllegalStateException) {
-                Logger.log("Failed to schedule tasks")
-                Logger.log(e)
-            }
-        }
+    val useAlarmManager = PrefManager.getVal<Boolean>(PrefName.UseAlarmManager)
+    val scheduler = TaskScheduler.create(this@App, useAlarmManager)
+    try {
+        scheduler.scheduleAllTasks(this@App)
+    } catch (e: IllegalStateException) {
+        Logger.log("Failed to schedule tasks")
+        Logger.log(e)
+    }
+}
     }
 
     private fun setupNotificationChannels() {

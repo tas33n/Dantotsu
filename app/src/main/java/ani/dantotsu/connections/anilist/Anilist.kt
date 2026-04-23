@@ -6,7 +6,6 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import ani.dantotsu.R
 import ani.dantotsu.client
-import ani.dantotsu.connections.comments.CommentsAPI
 import ani.dantotsu.currContext
 import ani.dantotsu.openLinkInBrowser
 import ani.dantotsu.settings.saving.PrefManager
@@ -256,10 +255,7 @@ object Anilist {
         PrefManager.setVal(PrefName.UnreadUserNotifications, 0)
         PrefManager.setVal(PrefName.UnreadMediaNotifications, 0)
         PrefManager.setVal(PrefName.UnreadSubscriptionNotifications, 0)
-        PrefManager.setVal(PrefName.UnreadCommentNotifications, 0)
         Anilist.unreadNotificationCount = 0
-        //logout from comments api
-        CommentsAPI.logout()
 
     }
 
@@ -353,14 +349,23 @@ object Anilist {
                     throw Exception(message)
                 }
                 if (!json.text.startsWith("{")) {
+                    Logger.log("Anilist Query Error: Unexpected response format: ${json.text}")
                     throw Exception(currContext()?.getString(R.string.anilist_down) + " (error: ${json.code})")
                 }
 
-                json.parsed()
+                try {
+                    json.parsed()
+                } catch (e: Exception) {
+                    Logger.log("Anilist Query Error: Failed to parse JSON: ${json.text}")
+                    throw e
+                }
             } else null
         } catch (e: Exception) {
             if (show) snackString("Error fetching Anilist data: ${e.message}")
             Logger.log("Anilist Query Error: ${e.message}")
+            if (e.message?.contains("Rate limited") == false) {
+                Logger.log("Anilist Query Trace: ${e.stackTraceToString()}")
+            }
             null
         }
     }

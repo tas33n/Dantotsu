@@ -75,7 +75,7 @@ object IdMappers {
                 val response = client.get("https://api.ani.zip/mappings?anilist_id=$anilistId")
                 val data = Mapper.json.decodeFromString<AniZipResponse>(response.text)
                 // Accessing the first mapping's imdb_id, if available
-                data.mappings.values.firstOrNull()?.imdbId
+                data.imdbId
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
@@ -119,10 +119,15 @@ data class AnimeId(
 
 @Serializable
 data class AniZipResponse(
-    val mappings: Map<String, AniZipMapping> = emptyMap()
-)
-
-@Serializable
-data class AniZipMapping(
-    @SerialName("imdb_id") val imdbId: String? = null
-)
+    val mappings: Map<String, JsonElement> = emptyMap()
+) {
+    /**
+     * Tries to find an "imdb_id" field within any of the nested JSON objects in mappings.
+     */
+    val imdbId: String?
+        get() = mappings.values.firstNotNullOfOrNull { element ->
+            if (element is JsonObject) {
+                element["imdb_id"]?.jsonPrimitive?.contentOrNull
+            } else null
+        }
+}

@@ -41,7 +41,6 @@ import ani.dantotsu.getThemeColor
 import ani.dantotsu.initActivity
 import ani.dantotsu.loadImage
 import ani.dantotsu.media.anime.AnimeWatchFragment
-import ani.dantotsu.media.comments.CommentsFragment
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.setBaseline
 import ani.dantotsu.openLinkInBrowser
@@ -316,33 +315,22 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 media,
                 intent.getIntExtra("commentId", -1)
             )
-        selected = if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) != 1 && media.selected!!.window == 2) 1 else media.selected!!.window
+        selected = media.selected!!.window
         binding.mediaTitle.translationX = -screenWidth
 
         val infoTab = navBar.createTab(R.drawable.ic_round_info_24, R.string.info, R.id.info)
         val watchTab = navBar.createTab(R.drawable.ic_round_movie_filter_24, R.string.watch, R.id.watch)
 
-        val commentTab =
-            navBar.createTab(R.drawable.ic_round_comment_24, R.string.comments, R.id.comment)
         navBar.addTab(infoTab)
         navBar.addTab(watchTab)
-        if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) {
-            navBar.addTab(commentTab)
-        }
         if (model.continueMedia == null && media.cameFromContinue) {
             model.continueMedia = PrefManager.getVal(PrefName.ContinueMedia)
             selected = 1
         }
-        if (intent.getStringExtra("FRAGMENT_TO_LOAD") != null && PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) selected = 2
         if (viewPager.currentItem != selected) viewPager.post {
             viewPager.setCurrentItem(selected, false)
         }
-        binding.commentInputLayout.isVisible = selected == 2
 
-        // Ensure that if we are returning from the comments tab, we go back to the media content tab
-        if (selected == 2 && PrefManager.getVal<Int>(PrefName.CommentsEnabled) != 1) {
-            selected = 1
-        }
         navBar.selectTabAt(selected)
         navBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(
@@ -352,7 +340,6 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
                 newTab: AnimatedBottomBar.Tab
             ) {
                 selected = newIndex
-                binding.commentInputLayout.isVisible = selected == 2
                 viewPager.setCurrentItem(selected, true)
                 val sel = model.loadSelected(media, isDownload)
                 sel.window = selected
@@ -411,25 +398,11 @@ class MediaDetailsActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedLi
     ) :
         FragmentStateAdapter(fragmentManager, lifecycle) {
 
-        override fun getItemCount(): Int = if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) 3 else 2
+        override fun getItemCount(): Int = 2
 
         override fun createFragment(position: Int): Fragment = when (position) {
             0 -> MediaInfoFragment()
             1 -> AnimeWatchFragment()
-
-            2 -> { // Index 2
-                if (PrefManager.getVal<Int>(PrefName.CommentsEnabled) == 1) {
-                    val fragment = CommentsFragment()
-                    val bundle = Bundle()
-                    bundle.putInt("mediaId", media.id)
-                    bundle.putString("mediaName", media.mainName())
-                    if (commentId != -1) bundle.putInt("commentId", commentId)
-                    fragment.arguments = bundle
-                    fragment
-                } else {
-                    MediaInfoFragment() // Fallback to Info tab if comments are disabled
-                }
-            }
 
             else -> MediaInfoFragment()
         }

@@ -16,11 +16,8 @@ import ani.dantotsu.connections.anilist.Anilist
 import ani.dantotsu.connections.anilist.api.Notification
 import ani.dantotsu.databinding.FragmentNotificationsBinding
 import ani.dantotsu.media.MediaDetailsActivity
-import ani.dantotsu.notifications.comment.CommentStore
 import ani.dantotsu.notifications.subscription.SubscriptionStore
 import ani.dantotsu.profile.ProfileActivity
-import ani.dantotsu.profile.activity.FeedActivity
-import ani.dantotsu.profile.notification.NotificationFragment.Companion.NotificationType.COMMENT
 import ani.dantotsu.profile.notification.NotificationFragment.Companion.NotificationType.MEDIA
 import ani.dantotsu.profile.notification.NotificationFragment.Companion.NotificationType.ONE
 import ani.dantotsu.profile.notification.NotificationFragment.Companion.NotificationType.SUBSCRIPTION
@@ -103,10 +100,7 @@ class NotificationFragment : Fragment() {
             SUBSCRIPTION -> {
                 PrefManager.setVal(PrefName.UnreadSubscriptionNotifications, 0)
             }
-            COMMENT -> {
-                PrefManager.setVal(PrefName.UnreadCommentNotifications, 0)
-            }
-            ONE -> {}
+            else -> {}
         }
 
         countResetCallback?.invoke(type, true)
@@ -117,7 +111,7 @@ class NotificationFragment : Fragment() {
             MEDIA -> getNotificationsFiltered(type = true) { it.media != null }
             USER -> getNotificationsFiltered { it.media == null }
             SUBSCRIPTION -> getSubscriptions()
-            COMMENT -> getComments()
+            else -> listOf()
         }
 
         
@@ -164,26 +158,6 @@ class NotificationFragment : Fragment() {
             }
     }
 
-    private fun getComments(): List<Notification> {
-        val list = PrefManager.getNullableVal<List<CommentStore>>(
-            PrefName.CommentNotificationStore,
-            null
-        ) ?: listOf()
-        return list
-            .sortedByDescending { (it.time / 1000L).toInt() }
-            .map {
-                Notification(
-                    it.type.toString(),
-                    System.currentTimeMillis().toInt(),
-                    commentId = it.commentId,
-                    notificationType = it.type.toString(),
-                    mediaId = it.mediaId,
-                    context = it.title + "\n" + it.content,
-                    createdAt = (it.time / 1000L).toInt(),
-                )
-            }
-    }
-
     private fun shouldLoadMore(): Boolean {
         val layoutManager =
             (binding.notificationRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
@@ -217,16 +191,7 @@ class NotificationFragment : Fragment() {
                 putExtra("activityId", id)
             }
 
-            NotificationClickType.COMMENT -> Intent(
-                requireContext(),
-                MediaDetailsActivity::class.java
-            ).apply {
-                putExtra("FRAGMENT_TO_LOAD", "COMMENTS")
-                putExtra("mediaId", id)
-                putExtra("commentId", optional ?: -1)
-            }
-
-            NotificationClickType.UNDEFINED -> null
+            else -> null
         }
 
         intent?.let {
@@ -243,8 +208,8 @@ class NotificationFragment : Fragment() {
         resetCountIfNeeded()
     }
     companion object {
-        enum class NotificationClickType { USER, MEDIA, ACTIVITY, COMMENT, UNDEFINED }
-        enum class NotificationType { MEDIA, USER, SUBSCRIPTION, COMMENT, ONE }
+        enum class NotificationClickType { USER, MEDIA, ACTIVITY, UNDEFINED }
+        enum class NotificationType { MEDIA, USER, SUBSCRIPTION, ONE }
 
         fun newInstance(
             type: NotificationType, 

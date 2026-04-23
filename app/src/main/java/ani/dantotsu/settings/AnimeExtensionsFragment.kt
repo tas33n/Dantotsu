@@ -10,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.updatePaddingRelative
+import ani.dantotsu.navBarHeight
+import ani.dantotsu.px
 import ani.dantotsu.databinding.FragmentExtensionsBinding
 import ani.dantotsu.settings.paging.AnimeExtensionAdapter
 import ani.dantotsu.settings.paging.AnimeExtensionsViewModel
@@ -48,6 +51,7 @@ class AnimeExtensionsFragment : Fragment(),
         binding.allExtensionsRecyclerView.isNestedScrollingEnabled = false
         binding.allExtensionsRecyclerView.adapter = adapter
         binding.allExtensionsRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.allExtensionsRecyclerView.updatePaddingRelative(bottom = navBarHeight + 160f.px)
         (binding.allExtensionsRecyclerView.layoutManager as LinearLayoutManager).isItemPrefetchEnabled =
             true
 

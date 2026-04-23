@@ -51,14 +51,6 @@ object Notifications {
     const val CHANNEL_INCOGNITO_MODE = "incognito_mode_channel"
     const val ID_INCOGNITO_MODE = -701
 
-    /**
-     * Notification channel used for comment notifications
-     */
-    private const val GROUP_COMMENTS = "group_comments"
-    const val CHANNEL_COMMENTS = "comments_channel"
-    const val CHANNEL_COMMENT_WARING = "comment_warning_channel"
-    const val ID_COMMENT_REPLY = -801
-
 
     const val CHANNEL_APP_GLOBAL = "app_global"
 
@@ -127,9 +119,6 @@ object Notifications {
                 buildNotificationChannelGroup(GROUP_APK_UPDATES) {
                     setName("App & Extension Updates")
                 },
-                buildNotificationChannelGroup(GROUP_COMMENTS) {
-                    setName("Comments")
-                },
                 buildNotificationChannelGroup(GROUP_ANILIST) {
                     setName("Anilist")
                 },
@@ -162,14 +151,6 @@ object Notifications {
                 },
                 buildNotificationChannel(CHANNEL_TORRENT_SERVER, IMPORTANCE_LOW) {
                     setName("Torrent Server")
-                },
-                buildNotificationChannel(CHANNEL_COMMENTS, IMPORTANCE_HIGH) {
-                    setName("Comments")
-                    setGroup(GROUP_COMMENTS)
-                },
-                buildNotificationChannel(CHANNEL_COMMENT_WARING, IMPORTANCE_HIGH) {
-                    setName("Comment Warnings")
-                    setGroup(GROUP_COMMENTS)
                 },
                 buildNotificationChannel(CHANNEL_ANILIST, IMPORTANCE_DEFAULT) {
                     setName("Anilist")

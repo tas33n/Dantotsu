@@ -331,33 +331,4 @@ class MediaDetailsViewModel : ViewModel() {
     fun clearLocalSubtitles(id: String) {
         localSubtitlesMap.remove(id)
     }
-
-    val adaptation = MutableLiveData<MangaAnimeUtil.AnimeAdaptation?>()
-    val nextRelease = MutableLiveData<MangaAnimeUtil.NextRelease?>()
-    fun loadMangaExtras(media: Media) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val seriesDeferred = async {
-                    MangaAnimeUtil.getSeriesFromMedia(media)
-                }
-
-                val adaptationDeferred = async {
-                    MangaAnimeUtil.getAnimeAdaptation(seriesDeferred.await())
-                }
-
-                val nextReleaseDeferred = async {
-                    MangaAnimeUtil.getNextChapterPrediction(
-                        media,
-                        seriesDeferred.await()
-                    )
-                }
-
-                adaptation.postValue(adaptationDeferred.await())
-                nextRelease.postValue(nextReleaseDeferred.await())
-
-            } catch (e: Exception) {
-                Logger.log("MangaExtras error: $e")
-            }
-        }
-    }
 }

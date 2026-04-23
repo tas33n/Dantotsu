@@ -39,6 +39,7 @@ import ani.dantotsu.connections.anilist.AnilistHomeViewModel
 import ani.dantotsu.databinding.ActivityMainBinding
 import ani.dantotsu.databinding.DialogUserAgentBinding
 import ani.dantotsu.databinding.SplashScreenBinding
+import ani.dantotsu.home.AnimeFragment
 import ani.dantotsu.home.HomeFragment
 import ani.dantotsu.home.LoginFragment
 import ani.dantotsu.home.NoInternet
@@ -47,7 +48,6 @@ import ani.dantotsu.notifications.TaskScheduler
 import ani.dantotsu.others.CustomBottomDialog
 import ani.dantotsu.others.calc.CalcActivity
 import ani.dantotsu.profile.ProfileActivity
-import ani.dantotsu.profile.activity.FeedActivity
 import ani.dantotsu.profile.notification.NotificationActivity
 import ani.dantotsu.settings.AddRepositoryBottomSheet
 import ani.dantotsu.settings.ExtensionsActivity
@@ -242,7 +242,7 @@ class MainActivity : AppCompatActivity() {
             window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
             selectedOption = if (fragment != null) {
                 when (fragment) {
-                    "ani.dantotsu.profile.activity.ActivityFragment" -> 0
+                    AnimeFragment::class.java.name -> 0
                     HomeFragment::class.java.name -> 1
                     "ani.dantotsu.settings.ExtensionsFragment" -> 2
                     else -> 1
@@ -253,6 +253,13 @@ class MainActivity : AppCompatActivity() {
             val navbar = binding.includedNavbar.navbar
             bottomBar = navbar
             navbar.visibility = View.VISIBLE
+            
+            if (PrefManager.getVal<Boolean>(PrefName.FloatingNavBar)) {
+                navbar.setBackgroundResource(R.drawable.bottom_nav_apple)
+                navbar.tabColorSelected = ContextCompat.getColor(this, R.color.apple_blue)
+                navbar.indicatorColor = ContextCompat.getColor(this, R.color.apple_blue)
+            }
+
             binding.mainProgressBar.visibility = View.GONE
             val mainViewPager = binding.viewpager
             mainViewPager.isUserInputEnabled = false
@@ -281,8 +288,10 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
             }
+            // If FloatingNavBar is enabled, we don't want to block the view with a background,
+            // so we set the container's bottom margin to 0 to allow content to go behind.
             binding.includedNavbar.navbarContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = navBarHeight
+                bottomMargin = if (PrefManager.getVal<Boolean>(PrefName.FloatingNavBar)) 0 else navBarHeight
             }
         }
 
@@ -301,14 +310,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 launched = true
                 startActivity(detailIntent)
-            } else if (fragmentToLoad == "FEED" && activityId != -1) {
-                val feedIntent = Intent(this, FeedActivity::class.java).apply {
-                    putExtra("FRAGMENT_TO_LOAD", "NOTIFICATIONS")
-                    putExtra("activityId", activityId)
-
-                }
-                launched = true
-                startActivity(feedIntent)
             } else if (fragmentToLoad == "NOTIFICATIONS" && activityId != -1) {
                 Logger.log("MainActivity, onCreate: $activityId")
                 val notificationIntent = Intent(this, NotificationActivity::class.java).apply {
@@ -438,6 +439,10 @@ class MainActivity : AppCompatActivity() {
         val params: ViewGroup.MarginLayoutParams =
             binding.includedNavbar.navbar.layoutParams as ViewGroup.MarginLayoutParams
         params.updateMargins(bottom = margin.toPx)
+
+        binding.includedNavbar.navbarContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            bottomMargin = if (PrefManager.getVal<Boolean>(PrefName.FloatingNavBar)) 0 else navBarHeight
+        }
     }
 
     private fun handleViewIntent(intent: Intent) {
@@ -542,7 +547,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             when (position) {
-                0 -> return ani.dantotsu.profile.activity.ActivityFragment.newInstance(ani.dantotsu.profile.activity.ActivityFragment.Companion.ActivityType.USER)
+                0 -> return AnimeFragment()
                 1 -> return if (Anilist.token != null) HomeFragment() else LoginFragment()
                 2 -> return ani.dantotsu.settings.ExtensionsFragment()
             }

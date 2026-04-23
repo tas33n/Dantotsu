@@ -346,7 +346,7 @@ enum class MediaSource {
 
 @Serializable
 enum class MediaFormat {
-    TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC;
+    TV, TV_SHORT, MOVIE, SPECIAL, OVA, ONA, MUSIC, MANGA, NOVEL, ONE_SHOT;
 
     override fun toString(): String {
         return super.toString().replace("_", " ")
