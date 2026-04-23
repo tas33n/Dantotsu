@@ -283,13 +283,13 @@ class MainActivity : AppCompatActivity() {
                 blurBg.visibility = View.VISIBLE
                 val blurDrawable = GradientDrawable().apply {
                     setColor(alphaColor)
-                    cornerRadius = 30f.px
+                    cornerRadius = 30f.px.toFloat()
                 }
                 blurBg.background = blurDrawable
                 
                 blurBg.outlineProvider = object : ViewOutlineProvider() {
                     override fun getOutline(view: View, outline: Outline) {
-                        outline.setRoundRect(0, 0, view.width, view.height, 30f.px)
+                        outline.setRoundRect(0, 0, view.width, view.height, 30f.px.toFloat())
                     }
                 }
                 blurBg.clipToOutline = true
