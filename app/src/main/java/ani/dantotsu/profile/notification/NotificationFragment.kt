@@ -184,13 +184,6 @@ class NotificationFragment : Fragment() {
                 putExtra("mediaId", id)
             }
 
-            NotificationClickType.ACTIVITY -> Intent(
-                requireContext(),
-                FeedActivity::class.java
-            ).apply {
-                putExtra("activityId", id)
-            }
-
             else -> null
         }
 

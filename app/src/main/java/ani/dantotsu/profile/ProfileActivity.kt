@@ -31,8 +31,6 @@ import ani.dantotsu.media.user.ListActivity
 import ani.dantotsu.navBarHeight
 import ani.dantotsu.openImage
 import ani.dantotsu.openLinkInBrowser
-import ani.dantotsu.profile.activity.ActivityFragment
-import ani.dantotsu.profile.activity.ActivityFragment.Companion.ActivityType
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
 import ani.dantotsu.snackString
