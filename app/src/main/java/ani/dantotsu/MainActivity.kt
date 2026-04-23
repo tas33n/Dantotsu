@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.drawable.Animatable
@@ -17,6 +18,7 @@ import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.view.animation.AnticipateInterpolator
 import android.widget.TextView
 import androidx.activity.addCallback
@@ -265,7 +267,7 @@ class MainActivity : AppCompatActivity() {
                 val colorPrimary = typedValue.data
 
                 val alphaColor = Color.argb(
-                    180,
+                    160,
                     Color.red(colorSurface),
                     Color.green(colorSurface),
                     Color.blue(colorSurface)
@@ -277,8 +279,23 @@ class MainActivity : AppCompatActivity() {
                 navbar.tabColorSelected = colorPrimary
                 navbar.indicatorColor = colorPrimary
 
+                val blurBg = binding.includedNavbar.navbarBlurBackground
+                blurBg.visibility = View.VISIBLE
+                val blurDrawable = GradientDrawable().apply {
+                    setColor(alphaColor)
+                    cornerRadius = 30f.px
+                }
+                blurBg.background = blurDrawable
+                
+                blurBg.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View, outline: Outline) {
+                        outline.setRoundRect(0, 0, view.width, view.height, 30f.px)
+                    }
+                }
+                blurBg.clipToOutline = true
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    navbar.setRenderEffect(RenderEffect.createBlurEffect(30f, 30f, Shader.TileMode.MIRROR))
+                    blurBg.setRenderEffect(RenderEffect.createBlurEffect(35f, 35f, Shader.TileMode.MIRROR))
                 }
                 binding.includedNavbar.navbarContainer.setPadding(32, 0, 32, 48)
             }

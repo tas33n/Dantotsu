@@ -40,9 +40,23 @@ class ExtensionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.searchExtensionsButton.setOnClickListener {
-            binding.headerLayout.visibility = View.GONE
-            binding.searchView.visibility = View.VISIBLE
-            binding.searchViewText.requestFocus()
+            if (binding.searchView.visibility == View.GONE) {
+                binding.headerLayout.visibility = View.GONE
+                binding.searchView.visibility = View.VISIBLE
+                binding.searchViewText.requestFocus()
+            } else {
+                binding.headerLayout.visibility = View.VISIBLE
+                binding.searchView.visibility = View.GONE
+                binding.searchViewText.setText("")
+                binding.searchViewText.clearFocus()
+            }
+        }
+
+        binding.searchView.setStartIconOnClickListener {
+            binding.headerLayout.visibility = View.VISIBLE
+            binding.searchView.visibility = View.GONE
+            binding.searchViewText.setText("")
+            binding.searchViewText.clearFocus()
         }
 
         binding.searchViewText.setOnFocusChangeListener { _, hasFocus ->
