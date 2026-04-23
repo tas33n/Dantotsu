@@ -1,5 +1,6 @@
 package ani.dantotsu.settings
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -30,8 +31,17 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import java.util.Locale
 
-class ExtensionsActivity : AppCompatActivity() {
+class ExtensionsActivity : AppCompatActivity(), ExtensionUIToggle {
     lateinit var binding: ActivityExtensionsBinding
+
+    override fun toggleUI(show: Boolean, name: String) {
+        binding.viewPager.visibility = if (show) View.VISIBLE else View.GONE
+        binding.tabLayout.visibility = if (show) View.VISIBLE else View.GONE
+        binding.searchView.visibility = if (show) View.VISIBLE else View.GONE
+        binding.languageselect.visibility = if (show) View.VISIBLE else View.GONE
+        binding.extensions.text = if (show) getString(R.string.extensions) else name
+        binding.fragmentExtensionsContainer.visibility = if (show) View.GONE else View.VISIBLE
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,11 +55,15 @@ class ExtensionsActivity : AppCompatActivity() {
                 binding.headerLayout.visibility = View.GONE
                 binding.searchView.visibility = View.VISIBLE
                 binding.searchViewText.requestFocus()
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.showSoftInput(binding.searchViewText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
             } else {
                 binding.headerLayout.visibility = View.VISIBLE
                 binding.searchView.visibility = View.GONE
                 binding.searchViewText.setText("")
                 binding.searchViewText.clearFocus()
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(binding.searchViewText.windowToken, 0)
             }
         }
 
@@ -58,6 +72,12 @@ class ExtensionsActivity : AppCompatActivity() {
             binding.searchView.visibility = View.GONE
             binding.searchViewText.setText("")
             binding.searchViewText.clearFocus()
+            val currentFragment = supportFragmentManager.findFragmentByTag("f${binding.viewPager.currentItem}")
+            if (currentFragment is SearchQueryHandler) {
+                currentFragment.updateContentBasedOnQuery("")
+            }
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(binding.searchViewText.windowToken, 0)
         }
 
         binding.searchViewText.setOnFocusChangeListener { _, hasFocus ->

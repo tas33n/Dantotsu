@@ -258,47 +258,6 @@ class MainActivity : AppCompatActivity() {
             val navbar = binding.includedNavbar.navbar
             bottomBar = navbar
             navbar.visibility = View.VISIBLE
-            
-            if (PrefManager.getVal<Boolean>(PrefName.FloatingNavBar)) {
-                val typedValue = android.util.TypedValue()
-                theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
-                val colorSurface = typedValue.data
-                theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, typedValue, true)
-                val colorPrimary = typedValue.data
-
-                val alphaColor = Color.argb(
-                    160,
-                    Color.red(colorSurface),
-                    Color.green(colorSurface),
-                    Color.blue(colorSurface)
-                )
-
-                val drawable = ContextCompat.getDrawable(this, R.drawable.bottom_nav_apple) as GradientDrawable
-                drawable.setColor(alphaColor)
-                navbar.background = drawable
-                navbar.tabColorSelected = colorPrimary
-                navbar.indicatorColor = colorPrimary
-
-                val blurBg = binding.includedNavbar.navbarBlurBackground
-                blurBg.visibility = View.VISIBLE
-                val blurDrawable = GradientDrawable().apply {
-                    setColor(alphaColor)
-                    cornerRadius = 30f.px.toFloat()
-                }
-                blurBg.background = blurDrawable
-                
-                blurBg.outlineProvider = object : ViewOutlineProvider() {
-                    override fun getOutline(view: View, outline: Outline) {
-                        outline.setRoundRect(0, 0, view.width, view.height, 30f.px.toFloat())
-                    }
-                }
-                blurBg.clipToOutline = true
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    blurBg.setRenderEffect(RenderEffect.createBlurEffect(35f, 35f, Shader.TileMode.MIRROR))
-                }
-                binding.includedNavbar.navbarContainer.setPadding(32, 0, 32, 48)
-            }
 
             binding.mainProgressBar.visibility = View.GONE
             val mainViewPager = binding.viewpager

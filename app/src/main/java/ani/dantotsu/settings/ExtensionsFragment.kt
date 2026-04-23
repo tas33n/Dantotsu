@@ -23,9 +23,22 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import java.util.Locale
 
-class ExtensionsFragment : Fragment() {
+interface ExtensionUIToggle {
+    fun toggleUI(show: Boolean, name: String = "")
+}
+
+class ExtensionsFragment : Fragment(), ExtensionUIToggle {
     private var _binding: FragmentExtensionsHostBinding? = null
     private val binding get() = _binding!!
+
+    override fun toggleUI(show: Boolean, name: String) {
+        binding.viewPager.isVisible = show
+        binding.tabLayout.isVisible = show
+        binding.searchView.isVisible = show
+        binding.languageselect.isVisible = show
+        binding.extensions.text = if (show) getString(R.string.extensions) else name
+        binding.fragmentExtensionsContainer.isGone = show
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,11 +57,15 @@ class ExtensionsFragment : Fragment() {
                 binding.headerLayout.visibility = View.GONE
                 binding.searchView.visibility = View.VISIBLE
                 binding.searchViewText.requestFocus()
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.showSoftInput(binding.searchViewText, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
             } else {
                 binding.headerLayout.visibility = View.VISIBLE
                 binding.searchView.visibility = View.GONE
                 binding.searchViewText.setText("")
                 binding.searchViewText.clearFocus()
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(binding.searchViewText.windowToken, 0)
             }
         }
 
@@ -57,6 +74,12 @@ class ExtensionsFragment : Fragment() {
             binding.searchView.visibility = View.GONE
             binding.searchViewText.setText("")
             binding.searchViewText.clearFocus()
+            val currentFragment = childFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
+            if (currentFragment is SearchQueryHandler) {
+                currentFragment.updateContentBasedOnQuery("")
+            }
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(binding.searchViewText.windowToken, 0)
         }
 
         binding.searchViewText.setOnFocusChangeListener { _, hasFocus ->

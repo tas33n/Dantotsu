@@ -166,17 +166,6 @@ class SettingsThemeActivity : AppCompatActivity(), SimpleDialog.OnDialogResultLi
                         isVisible = Build.VERSION.SDK_INT > Build.VERSION_CODES.R
                     ),
                     Settings(
-                        type = 2,
-                        name = getString(R.string.floating_nav_bar),
-                        desc = getString(R.string.floating_nav_bar_desc),
-                        icon = R.drawable.ic_round_smart_button_24,
-                        isChecked = PrefManager.getVal(PrefName.FloatingNavBar),
-                        switch = { isChecked, _ ->
-                            PrefManager.setVal(PrefName.FloatingNavBar, isChecked)
-                            reload()
-                        }
-                    ),
-                    Settings(
                         type = 1,
                         name = getString(R.string.color_picker),
                         desc = getString(R.string.color_picker_desc),

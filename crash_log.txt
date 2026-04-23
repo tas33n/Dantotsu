@@ -1,0 +1,50 @@
+Date/time: Thu Apr 23 13:57:15 GMT+06:00 2026
+Device: 22021211RG
+OS version: 14
+App version: 3.2.2-beta01
+App version code: 300200200
+SDK version: 34
+Manufacturer: Xiaomi
+Brand: POCO
+Product: munch_global
+Device: munch
+Hardware: qcom
+Host: pangu-build-component-system-77820-5mj6c-366sw-xnkkz
+ID: UKQ1.231207.002
+Type: user
+User: builder
+Tags: release-keys
+Time: 1746514441000
+Radio: 2.5.1.c1-14.1-0506_0652_970fb323,2.5.1.c1-14.1-0506_0652_970fb323
+Bootloader: unknown
+Board: munch
+Fingerprint: POCO/munch_global/munch:14/UKQ1.231207.002/V816.0.8.0.ULMTWXM:user/release-keys
+Supported ABIs: arm64-v8a, armeabi-v7a, armeabi
+Supported 32 bit ABIs: armeabi-v7a, armeabi
+Supported 64 bit ABIs: arm64-v8a
+Is emulator: false
+--------------------------------
+Thread: main
+Activity: MainActivity
+Exception: ani.dantotsu.MainActivity cannot be cast to ani.dantotsu.settings.ExtensionsActivity
+Stack trace:
+java.lang.ClassCastException: ani.dantotsu.MainActivity cannot be cast to ani.dantotsu.settings.ExtensionsActivity
+	at ani.dantotsu.settings.InstalledAnimeExtensionsFragment.extensionsAdapter$lambda$0$0(InstalledAnimeExtensionsFragment.kt:62)
+	at ani.dantotsu.settings.InstalledAnimeExtensionsFragment.$r8$lambda$qLSUpuvJ7p4on0_9FK9I5blIeC8(Unknown Source:0)
+	at ani.dantotsu.settings.InstalledAnimeExtensionsFragment$$ExternalSyntheticLambda10.invoke(D8$$SyntheticClass:0)
+	at ani.dantotsu.settings.InstalledAnimeExtensionsFragment.extensionsAdapter$lambda$0(InstalledAnimeExtensionsFragment.kt:118)
+	at ani.dantotsu.settings.InstalledAnimeExtensionsFragment$$ExternalSyntheticLambda3.invoke(D8$$SyntheticClass:0)
+	at ani.dantotsu.settings.InstalledAnimeExtensionsFragment$AnimeExtensionsAdapter.onBindViewHolder$lambda$2(InstalledAnimeExtensionsFragment.kt:316)
+	at ani.dantotsu.settings.InstalledAnimeExtensionsFragment$AnimeExtensionsAdapter$$ExternalSyntheticLambda2.onClick(D8$$SyntheticClass:0)
+	at android.view.View.performClick(View.java:7798)
+	at android.view.View.performClickInternal(View.java:7775)
+	at android.view.View.-$$Nest$mperformClickInternal(Unknown Source:0)
+	at android.view.View$PerformClick.run(View.java:31225)
+	at android.os.Handler.handleCallback(Handler.java:958)
+	at android.os.Handler.dispatchMessage(Handler.java:99)
+	at android.os.Looper.loopOnce(Looper.java:224)
+	at android.os.Looper.loop(Looper.java:318)
+	at android.app.ActivityThread.main(ActivityThread.java:8790)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:561)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1013)

@@ -1025,6 +1025,4 @@ Non quae tempore quo provident laudantium qui illo dolor vel quia dolor et exerc
     <string name="no_status_activities">No status activities</string>
     <string name="no_messages">No messages</string>
     <string name="no_text_activities">No text activities</string>
-    <string name="floating_nav_bar">Enable Blur</string>
-    <string name="floating_nav_bar_desc">Enable blurry glassy navigation bar</string>
 </resources>
