@@ -349,7 +349,7 @@ class StatsFragment :
             }
         }
         if (chartPackets.isNotEmpty()) {
-            val referenceNames = chartPackets.first().names.map { it.toString() }
+            val referenceNames = chartPackets.firstOrNull()?.names?.map { it.toString() } ?: emptyList()
             val standardizedPackets = chartPackets.map { packet ->
                 val valuesMap = packet.names.map { it.toString() }.zip(packet.statData).toMap()
                 val standardizedValues = referenceNames.map { name ->
@@ -371,7 +371,7 @@ class StatsFragment :
                 chartPackets,
                 xAxisName = "Genre",
                 polar = true,
-                passedCategories = chartPackets[0].names as List<String>,
+                passedCategories = chartPackets.firstOrNull()?.names as? List<String> ?: emptyList(),
                 normalize = true
             )
             adapter.add(ChartItem("Genre", genreChart, activity))
@@ -393,7 +393,7 @@ class StatsFragment :
             }
         }
         if (chartPackets.isNotEmpty()) {
-            val referenceNames = chartPackets.first().names.map { it.toString() }
+            val referenceNames = chartPackets.firstOrNull()?.names?.map { it.toString() } ?: emptyList()
             val standardizedPackets = chartPackets.map { packet ->
                 val valuesMap = packet.names.map { it.toString() }.zip(packet.statData).toMap()
                 val standardizedValues = referenceNames.map { name ->
@@ -415,7 +415,7 @@ class StatsFragment :
                 chartPackets,
                 xAxisName = "Tag",
                 polar = false,
-                passedCategories = chartPackets[0].names as List<String>,
+                passedCategories = chartPackets.firstOrNull()?.names as? List<String> ?: emptyList(),
                 scrollPos = 0.0f
             )
             adapter.add(ChartItem("Tag", tagChart, activity))
@@ -437,7 +437,7 @@ class StatsFragment :
             }
         }
         if (chartPackets.isNotEmpty()) {
-            val referenceNames = chartPackets.first().names.map { it.toString() }
+            val referenceNames = chartPackets.firstOrNull()?.names?.map { it.toString() } ?: emptyList()
             val standardizedPackets = chartPackets.map { packet ->
                 val valuesMap = packet.names.map { it.toString() }.zip(packet.statData).toMap()
                 val standardizedValues = referenceNames.map { name ->
@@ -459,7 +459,7 @@ class StatsFragment :
                 chartPackets,
                 xAxisName = "Country",
                 polar = false,
-                passedCategories = chartPackets[0].names as List<String>,
+                passedCategories = chartPackets.firstOrNull()?.names as? List<String> ?: emptyList(),
                 scrollPos = null
             )
             adapter.add(ChartItem("Country", countryChart, activity))
@@ -482,7 +482,7 @@ class StatsFragment :
             }
         }
         if (chartPackets.isNotEmpty()) {
-            val referenceNames = chartPackets.first().names.map { it.toString() }
+            val referenceNames = chartPackets.firstOrNull()?.names?.map { it.toString() } ?: emptyList()
             val standardizedPackets = chartPackets.map { packet ->
                 val valuesMap = packet.names.map { it.toString() }.zip(packet.statData).toMap()
                 val standardizedValues = referenceNames.map { name ->
@@ -504,7 +504,7 @@ class StatsFragment :
                 chartPackets,
                 xAxisName = "Voice Actor",
                 polar = false,
-                passedCategories = chartPackets[0].names as List<String>,
+                passedCategories = chartPackets.firstOrNull()?.names as? List<String> ?: emptyList(),
                 scrollPos = 0.0f
             )
             adapter.add(ChartItem("Voice Actor", voiceActorsChart, activity))
@@ -526,7 +526,7 @@ class StatsFragment :
             }
         }
         if (chartPackets.isNotEmpty()) {
-            val referenceNames = chartPackets.first().names.map { it.toString() }
+            val referenceNames = chartPackets.firstOrNull()?.names?.map { it.toString() } ?: emptyList()
             val standardizedPackets = chartPackets.map { packet ->
                 val valuesMap = packet.names.map { it.toString() }.zip(packet.statData).toMap()
                 val standardizedValues = referenceNames.map { name ->
@@ -548,7 +548,7 @@ class StatsFragment :
                 chartPackets,
                 xAxisName = "Studio",
                 polar = true,
-                passedCategories = chartPackets[0].names as List<String>,
+                passedCategories = chartPackets.firstOrNull()?.names as? List<String> ?: emptyList(),
                 scrollPos = null,
                 normalize = true
             )
@@ -572,7 +572,7 @@ class StatsFragment :
             }
         }
         if (chartPackets.isNotEmpty()) {
-            val referenceNames = chartPackets.first().names.map { it.toString() }
+            val referenceNames = chartPackets.firstOrNull()?.names?.map { it.toString() } ?: emptyList()
             val standardizedPackets = chartPackets.map { packet ->
                 val valuesMap = packet.names.map { it.toString() }.zip(packet.statData).toMap()
                 val standardizedValues = referenceNames.map { name ->
@@ -594,7 +594,7 @@ class StatsFragment :
                 chartPackets,
                 xAxisName = "Staff",
                 polar = false,
-                passedCategories = chartPackets[0].names as List<String>,
+                passedCategories = chartPackets.firstOrNull()?.names as? List<String> ?: emptyList(),
                 scrollPos = 0.0f
             )
             adapter.add(ChartItem("Staff", staffChart, activity))

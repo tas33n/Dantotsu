@@ -1,5 +1,6 @@
 package ani.dantotsu.settings
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -8,7 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ani.dantotsu.R
@@ -16,8 +22,10 @@ import ani.dantotsu.databinding.FragmentExtensionsHostBinding
 import ani.dantotsu.media.MediaType
 import ani.dantotsu.others.LanguageMapper
 import ani.dantotsu.parsers.ParserTestActivity
+import ani.dantotsu.px
 import ani.dantotsu.settings.saving.PrefManager
 import ani.dantotsu.settings.saving.PrefName
+import ani.dantotsu.statusBarHeight
 import ani.dantotsu.util.customAlertDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -31,6 +39,15 @@ class ExtensionsFragment : Fragment(), ExtensionUIToggle {
     private var _binding: FragmentExtensionsHostBinding? = null
     private val binding get() = _binding!!
 
+    private val backPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            if (!childFragmentManager.popBackStackImmediate()) {
+                isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+
     override fun toggleUI(show: Boolean, name: String) {
         binding.viewPager.isVisible = show
         binding.tabLayout.isVisible = show
@@ -38,6 +55,7 @@ class ExtensionsFragment : Fragment(), ExtensionUIToggle {
         binding.languageselect.isVisible = show
         binding.extensions.text = if (show) getString(R.string.extensions) else name
         binding.fragmentExtensionsContainer.isGone = show
+        backPressedCallback.isEnabled = !show
     }
 
     override fun onCreateView(
@@ -51,6 +69,13 @@ class ExtensionsFragment : Fragment(), ExtensionUIToggle {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+
+        binding.headerLayout.updatePadding(top = statusBarHeight + 16f.px)
+        binding.searchView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = statusBarHeight + 12f.px
+        }
 
         binding.searchExtensionsButton.setOnClickListener {
             if (binding.searchView.visibility == View.GONE) {
@@ -74,7 +99,7 @@ class ExtensionsFragment : Fragment(), ExtensionUIToggle {
             binding.searchView.visibility = View.GONE
             binding.searchViewText.setText("")
             binding.searchViewText.clearFocus()
-            val currentFragment = childFragmentManager.findFragmentByTag("f${viewPager.currentItem}")
+            val currentFragment = childFragmentManager.findFragmentByTag("f${binding.viewPager.currentItem}")
             if (currentFragment is SearchQueryHandler) {
                 currentFragment.updateContentBasedOnQuery("")
             }

@@ -18,8 +18,10 @@ This is a **personal, experimental fork** of Dantotsu. It aims to streamline the
 - **Revamped Home Page:** Replaced the static "Anime List" bar with a horizontal scrollable row of status cards (Watching, Planning, Completed, etc.) for quicker access to your library.
 - **Improved Navigation:** Consolidated the bottom navigation bar into three clear sections: **Feed**, **Home**, and **Extensions**.
 - **Extensions at Your Fingertips:** Moved the Extensions management directly into the bottom navigation bar for easier access.
-- **Comments Disabled by Default:** Focus on the media first; comments can still be enabled in settings if desired.
-- **Under the Hood:** Significant cleanup of AniList queries and models to improve performance and data fetching reliability.
+- **Glassmorphic UI:** Added a floating navigation bar with a glassy blur effect for a modern, "alive" aesthetic.
+- **Activity Feed Restored:** Re-implemented the Anilist activity feed, now accessible via the "Activity List" in the profile dropdown and as a new tab on user profiles.
+- **Surgical UI Cleanup:** Removed integrated comments and legacy social feeds to ensure a clutter-free media experience.
+- **Under the Hood:** Significant cleanup of AniList queries and models to improve performance and data fetching reliability, plus stability fixes for statistics rendering.
 
 ---
 

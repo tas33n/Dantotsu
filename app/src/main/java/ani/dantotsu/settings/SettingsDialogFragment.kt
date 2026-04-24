@@ -109,6 +109,13 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
             dismiss()
         }
 
+        binding.settingsActivityList.setSafeOnClickListener {
+            startActivity(
+                Intent(requireContext(), ani.dantotsu.profile.activity.FeedActivity::class.java)
+            )
+            dismiss()
+        }
+
         binding.settingsNotification.setOnClickListener {
             startActivity(Intent(activity, NotificationActivity::class.java))
             dismiss()

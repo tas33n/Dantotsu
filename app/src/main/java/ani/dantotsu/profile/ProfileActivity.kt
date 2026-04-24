@@ -45,6 +45,8 @@ import nl.joery.animatedbottombar.AnimatedBottomBar
 import kotlin.math.abs
 
 
+import ani.dantotsu.profile.activity.ActivityFragment
+
 class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListener {
     lateinit var binding: ActivityProfileBinding
     private lateinit var bindingProfileAppBar: ItemProfileAppBarBinding
@@ -55,9 +57,9 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
         super.onCreate(savedInstanceState)
         ThemeManager(this).applyTheme()
         initActivity(this)
-        if (savedInstanceState != null) {
-            selected = savedInstanceState.getInt("selectedTab", 0)
-        }
+        selected = savedInstanceState?.getInt("selectedTab", 0)
+            ?: intent.getIntExtra("selectedTab", 0)
+
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val context = this
@@ -65,8 +67,10 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
         navBar = binding.profileNavBar
         val profileTab = navBar.createTab(R.drawable.ic_round_person_24, "Profile")
         val statsTab = navBar.createTab(R.drawable.ic_stats_24, "Stats")
+        val activityTab = navBar.createTab(R.drawable.ic_round_view_list_24, "Activity")
         navBar.addTab(profileTab)
         navBar.addTab(statsTab)
+        navBar.addTab(activityTab)
         navBar.visibility = View.GONE
         binding.profileViewPager.isUserInputEnabled = false
 
@@ -307,10 +311,11 @@ class ProfileActivity : AppCompatActivity(), AppBarLayout.OnOffsetChangedListene
     ) :
         FragmentStateAdapter(fragmentManager, lifecycle) {
 
-        override fun getItemCount(): Int = 2
+        override fun getItemCount(): Int = 3
         override fun createFragment(position: Int): Fragment = when (position) {
             0 -> ProfileFragment.newInstance(user)
             1 -> StatsFragment.newInstance(user)
+            2 -> ActivityFragment.newInstance(user.id)
             else -> ProfileFragment.newInstance(user)
         }
     }

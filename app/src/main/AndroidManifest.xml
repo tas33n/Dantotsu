@@ -157,6 +157,9 @@
         </activity>
 
         <activity
+            android:name=".profile.activity.FeedActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".profile.ProfileActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
